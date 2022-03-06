@@ -1,0 +1,38 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}
+    {{topic.title}}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style_forum.css'%}">
+<div class="container">
+
+    <h2>{{forum.name}}</h2>
+
+    {% if topics%}
+    <ul class="topics-list">
+        {% for topic in topics%}
+        <li class="topic">
+            <a href="/topic/{{topic.id}}"><h3 class="topic-title">{{topic.title}}</h3></a>
+            {{topic.username}} >> {{topic.created_at}} {{topic.status}} Просмотров {{topic.counted_views}}
+        </li>
+        {% endfor%}
+    </ul>
+    {% else %}
+    <h3>Тем на форуме нет</h3>
+    {% endif %}
+
+    <a href="/forum/{{forum.id}}/add-topic/"><h3 class="topic-title">Добавить новую тему</h3></a>
+</div>
+
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{topic_form.as_p}}
+        {{msg_form.as_p}}
+        <button type="submit">Добавить новую тему</button>
+    </form>
+</div>  
+{% endblock %}

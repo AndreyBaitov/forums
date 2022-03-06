@@ -1,0 +1,68 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-forums-list.css'%}">
+
+<section class="forums">
+    {% for key, category in categories.items %}
+    <!-- Коричневая шапка -->
+    <div class="small-container forums-container">
+        <div class="forums-header">
+            <div class="forums-header-category">{{category}}
+            </div>
+            <div class="forums-header-themes">Темы
+            </div>
+            <div class="forums-header-messages">Сообщения
+            </div>
+            <div class="forums-header-last-mgs">Последнее сообщение
+            </div>
+            <div class="forums-header-closed">-
+            </div>
+        </div>
+        
+        <!-- Списки форумов под шапкой -->
+        <div class="forums-body forums-list">
+            {% for forum in forums %}
+            {% if forum.status != 'hiddened' and forum.category.name == category %}
+            <ul class="forum-info">
+                <li class="forum new-nonew-img">
+                    <img src="{% static 'img/nonewmsg.png'%}">
+                </li>
+                <li class="forum forum-description">
+                    <ul class="forum-description-list">
+                        <li class="forum-description-item forum-name">
+                            <a href="/forum/{{forum.id}}">{{forum.name}}</a>
+                        </li>
+                        <li class="forum-description-item forum-short-description">
+                            {{forum.description}}
+                        </li>
+                        <li class="forum-description-item forum-moderators">
+                            Модераторы: <a href="#">Freelander</a>, <a href="#">Valentin Demin</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="forum number-topics">12
+                </li>
+                <li class="forum number-messages">437
+                </li>
+                <li class="forum last-message">
+                    <ul class="last-message-list">
+                        <li class="last-message-item last-message-topic">
+                            <a href="#">Re: Узлы для снастей</a>
+                        </li>
+                        <li class="last-message-item last-message-info">
+                            <a href="#">Олег Серегин</a>  Вт июль 15, 2014 0:10
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            {% endif %}
+            {% endfor %}  <!-- Цикла списка форумов -->
+        </div>
+    </div>
+
+    {% endfor %}  <!-- Цикла категорий -->
+</section>
+
+{% endblock %}

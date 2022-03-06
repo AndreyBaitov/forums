@@ -1,0 +1,305 @@
+﻿* {
+	box-sizing: border-box;
+}
+
+a {
+	text-decoration: none;
+	color: #663333;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+
+html {
+	font-family: Verdana;
+}
+
+.container {
+	max-width: 1200px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+.small-container {
+	max-width: 1160px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 100%;
+	padding-left: 20px;
+	border: 2px solid #663333;
+}
+
+body {
+	background-color: #FAEAC6;
+}
+
+.input {
+	outline: none;
+}
+
+
+/* Header */
+
+
+.header {
+	height: 75px;
+}
+
+.header-container{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px;
+	border: 1px solid #4787a7;
+	border-radius: 5px;
+	background-color: #663333;
+	margin-top: 10px;
+	color: #FAEAC6;
+}
+
+.header-title a {color: #FAEAC6;}
+
+
+.inputbox-search {
+	max-length: 128;
+	size: 20;
+	height: 25px;
+	border: none;
+	border: 1px solid white;
+	border-radius: 5px;
+	outline: none;
+
+}
+.search-container {
+	display: flex;
+	align-items: center;
+	background-color: white;
+	border: 1px solid white;
+	border-radius: 5px;
+	height: 25px;
+}
+
+.header-button {
+	width: 25px;
+	height: 25px;
+	background-color: white;
+	border: 1px solid #d1d1d1;
+	border-radius: 5px;
+}
+
+
+/* Верхняя панель навигации */
+
+.upper-nav-container {
+	margin-top: 10px;
+	background-image:url('../img/nav-background.png');
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 10px;
+}
+
+/* Логотип */
+
+.place-for-logo {
+	height: 100%;
+	width: 50px;
+}
+
+.ship {
+	height: 30px;
+	left: 20px;
+	animation: move 60s;
+	transition-property: height;
+	transition-duration: 1000ms;
+	transition-timing-function: linear;
+}
+
+.ship:hover {
+	height: 50px;
+}
+
+
+@keyframes move {
+  from {position: relative; left:1000px;}
+  to {left: 20px;}
+}
+
+/* центральное меню */
+
+.nav-list {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.nav-item:not(:last-child){
+	margin-right: 30px;
+}
+
+.nav-link {
+	color: #663333;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+
+/* логиновая часть */
+
+.login-list {
+	height: 100%;
+	width: 25%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	position: relative;
+}
+
+.login-item {
+	border-radius: 15px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.button {
+	padding: 5px 0px;
+	width: 100px;
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 15px;
+	background-color: #663333;
+	color: #FAEAC6;
+}
+.login-item:first-child{
+	margin-right: 10px;
+}
+
+.login-username {
+	position: absolute;
+	right: 12%;
+	top: 35px;
+	font-size: 10px;
+	margin: 0;
+	padding: 0;
+}
+
+
+/* Надфорумное меню*/
+
+.up-middle-nav-container{
+	border: none;
+	padding-top: 10px;
+	padding-left: 0;
+	
+}
+
+.middle-nav-list {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	background-image: url('../img/home.svg');
+	background-repeat: no-repeat;
+}
+
+.middle-nav-item:not(:last-child){
+	margin-right: 5px;
+}
+.middle-nav-item:first-child{
+	margin-left: 25px;
+}
+
+.middle-nav-link {
+	color: #663333;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.down-middle-nav-container{
+	border: none;
+	padding-top: 10px;
+	padding-left: 0;
+}
+
+.down-middle-nav-list {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.down-middle-nav-item:not(:last-child){
+	margin-right: 15px;
+}
+
+.down-middle-nav-link {
+	color: #663333;
+	font-size: 10px;
+}
+
+.current-time-container {
+	text-align: right;
+	border: none;
+	border-top: 1px solid #663333;
+	padding: 3px 0;
+	font-size: 11px;
+}
+
+
+/* Under-forums-statistic*/
+
+.under-forums-container{
+	border: none;
+	padding-left: 10px;
+	padding-top: 15px;
+	font-size: 11px;
+}
+
+.under-forums-header {
+	margin-bottom: 5px;
+	color: #663333;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.under-forums-item{
+	margin-top: 20px;
+}
+
+.foot-login-list{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+.foot-login-item:not(:last-child){
+	margin-right: 5px;
+	color: #663333;
+}
+
+.foot-login-link{
+	display: inline-block;
+	text-align: center;
+}
+
+.member-checkbox {
+	margin-top: 4px;
+}
+
+.statistic-line{
+	margin-top: 5px;
+}
+
+
+
+
+
+
+
+

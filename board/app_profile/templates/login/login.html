@@ -1,0 +1,23 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}
+    Логин
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if request.user.is_authenticated %}
+    <div>Вы уже авторизовались, товарищ {{request.user.username}}</div>
+    <div><a href="/logout/">Выйти из профиля</a></div>
+    {% else %}
+    <h2>Введите свои данные</h2>
+    <form method="post" action="/login/">
+        {% csrf_token %}
+        {{auth_form.as_p}}
+        <button type="submit">Войти</button>
+
+    </form>
+    {% endif%}
+</div>
+{% endblock %}

@@ -1,0 +1,160 @@
+﻿{% load static %}
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Заголовок</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css'%}">
+		<link rel="stylesheet" type="text/css" href="{% static 'css/style-basic.css'%}">
+		<link rel="shortcut icon" href="{% static 'img/favicon.ico'%}" type="image/x-icon">
+	</head>
+
+
+<body class="body">
+
+	<header class="header">
+		<div class="container header-container">
+			<div class="header-title">
+				ЧУЛАНЧИК НА <a href="www.shipmodeling.ru">ВЕРФИ</a>
+			</div>
+			<form method="POST" class="search-container">
+					<input class="inputbox-search" name="keywords" id="keywords" type="search" title="Ключевые слова" value="" placeholder="Поиск…">
+					<button class="header-button button-search" type="submit" title="Поиск"><img src="{% static 'img/search.svg'%}"></button>
+					<button class="header-button button-extented-search" type="submit" title="Расширенный Поиск"><img src="{% static 'img/extended-search.svg'%}"></button>
+			</form>
+		</div>
+	</header>
+
+	<nav class="upper-nav">
+		<div class="container upper-nav-container">
+			<div class="place-for-logo"><img src="{% static 'img/logo.svg'%}" class="logo ship"></div>
+			<ul class="nav-list">
+					<li class="nav-item"><a href="/forums/" class="nav-link">ГЛАВНАЯ</a></li>
+					<li class="nav-item"><a href="/forums/" class="nav-link">НОВОСТИ</a></li>
+					<li class="nav-item"><a href="/forums/" class="nav-link">БАРАХОЛКА</a></li>
+                			<li class="nav-item"><a href="{% url 'forums' %}" class="nav-link">ФОРУМЫ</a></li>
+					<li class="nav-item"><a href="/admin/" class="nav-link">АДМИНКА</a></li>
+			</ul>
+			<ul class="login-list">
+				{% if request.user.is_authenticated %}
+				<li class="login-item"><a href="/logout/" class="login-link button">Выйти</a></li>
+				<li class="login-item"><a href="/settings/" class="login-link button">Настройки</a></li>
+				{% else %}
+				<li class="login-item"><a href="/login/" class="login-link button">Войти</a></li>
+				<li class="login-item"><a href="/profile/register" class="login-link button">Регистрация</a></li>
+				{% endif %}
+			<p class="login-username">{{request.user.username}}</p>
+			</ul>
+
+		</div>
+	</nav>
+	<nav class="middle-nav">
+		<div class="small-container up-middle-nav-container">
+			<ul class="middle-nav-list">
+				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link">Список форумов</a></li>
+				{% if forum.name%}
+				<li class="middle-nav-item"><a href="/forum/{{forum.id}}" class="middle-nav-link">&raquo; {{forum.name}}</a></li>
+				{% endif %}
+				{% if topic.title%}
+				<li class="middle-nav-item"><a href="/topic/{{topic.id}}" class="middle-nav-link">&raquo; {{topic.title}}</a></li>
+				{% endif %}
+			</ul>
+		</div>
+		<div class="small-container down-middle-nav-container">
+			<ul class="down-middle-nav-list">
+				<li class="down-middle-nav-item"><a href="#" class="down-middle-nav-link">Темы без ответов</a></li>
+				<li class="down-middle-nav-item"><a href="#" class="down-middle-nav-link">Активные темы</a></li>
+				<li class="down-middle-nav-item"><a href="#" class="down-middle-nav-link">Ваши сообщения</a></li>
+			</ul>
+
+		</div>
+	</nav>
+	<div class="current-time">
+		<div class="small-container current-time-container">
+	Текущее время: {{date}}{{time}}
+		</div>
+	</div>
+
+    {% block content %}
+    {% endblock %}
+
+<section class="info-under-forums">
+<div class="small-container under-forums-container">
+<ul class="under-forums-list">
+	
+	<li class="under-forums-item">
+		<nav class="foot-login">
+			{% if request.user.is_authenticated %}
+				<a href="/logout/" class="foot-login-link button">Выйти</a>
+				<a href="/settings/" class="foot-login-link button">Настройки</a>
+			{% else %}
+				<div class="under-forums-header">
+					<a href="/login/" class="login-link">ВХОД</a>
+					|
+					<a href="/profile/register" class="login-link">РЕГИСТРАЦИЯ</a>
+				</div>
+				<form method="post" action="/foot-login/" class="foot-login-form">
+					<ul class="foot-login-list">
+						<li class="foot-login-item">
+							Имя пользователя: <input type="text" name="username" class="input username-input">
+						</li>
+						<li class="foot-login-item">
+							Пароль: <input type="text" name="password" class="input password-input">
+						</li>
+						<li class="foot-login-item">
+							<a href="/forgot-password/">Забыли пароль?</a> | Запомнить меня
+						</li>
+						<li class="foot-login-item">
+							<input type="checkbox" name="member-me" class="member-checkbox">
+						</li>
+						<li class="foot-login-item">
+							<button type="submit" class="button">Вход</button>
+						</li>
+					</ul>
+				</form>
+			{% endif %}
+
+		</nav>
+	</li>
+
+	<li class="under-forums-item">
+		<div class="statistic-line under-forums-header">КТО СЕЙЧАС НА ФОРУМАХ</div>
+		<div class="statistic-line">В данный момент (5 минут): {{users}} посетителей: {{auth_users}} зарегистрированных, {{hidd_users}} скрытых и {{guests}} гостей</div>
+		<div class="statistic-line">Больше всего посетителей({{max_users}}) было в {{datetime_of_max_users}}</div>
+	</li>
+	<li class="under-forums-item">
+		<div class="statistic-line under-forums-header">СТАТИСТИКА</div>
+		<div class="statistic-line">Всего сообщений: {{total_messages}}. Всего тем: {{total_topics}}. Всего пользователей: {{total_users}}. Новый пользователь: {{new_user}}</div>
+	</li>
+	<li class="under-forums-item">
+		<div class="statistic-line under-forums-header">ТОПЛИСТ - 5 БЛАГОДАРНОСТЕЙ</div>
+		<div class="statistic-line">Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}.</div>
+	</li>
+
+	<li class="statistic-line">
+		<a href="/forums/" class="middle-nav-link">Список форумов</a>
+	</li>
+</ul>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<footer class="footer">
+		<div class="container footer-container">
+		</div>
+	</footer>
+</body>
+</html>

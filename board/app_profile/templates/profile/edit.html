@@ -1,0 +1,18 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}
+    Редактирование своих данных
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Редактирование своих данных</h2>
+    <form method="post" action="/profile/{{user_id}}/edit/">
+        {% csrf_token %}
+        {{user_form.as_p}}
+        <button type="submit">Сохранить</button>
+        <div><a href="/forums/">Выйти</a></div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}
+    {{topic.title}}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style_topic.css'%}">
+<div class="container">
+
+    <h2>{{topic.title}}</h2>
+
+<ul class="messages-list">
+    {% if messages %}
+    {% for message in messages%}
+        <li class="messages">
+            {% if message.title %}
+            <h4 class="messages-title">{{message.title}}</h4>
+            {% else %}
+            <h4 class="messages-title">-</h4>
+            {% endif%}
+            {{message.user}} >> {{message.created_at}}
+                                                        {% if message.status == 'editable' %}
+                                                        <a href="/edit-message/{{message.id}}/">{{message.status}}</a>
+                                                        {% else %}
+                                                        {{message.status}}
+                                                        {% endif %}
+                                                        <a href="/delete-message/{{message.id}}/">Удалить сообщение</a>
+            <div class="msg">{{message.message}}</div>
+        </li>
+    {% endfor%}
+    {% else %}
+    <h4 class="messages-title">Сообщений в теме нет.</h4>
+    {% endif%}
+
+</ul>
+
+<h2><a href="/topic/{{topic.id}}/add-message/">Добавить сообщение</a></h2>
+</div>
+{% endblock %}

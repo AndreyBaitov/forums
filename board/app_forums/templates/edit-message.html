@@ -1,0 +1,23 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}
+    {{topic.title}}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style_topic.css'%}">
+<div class="container">
+
+    <h2><a href="/topic/{{topic.id}}/">{{topic.title}}</a></h2>
+</div>
+
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{msg_form.as_p}}
+        <button type="submit">Сохранить</button>
+    </form>
+</div>
+
+{% endblock %}
