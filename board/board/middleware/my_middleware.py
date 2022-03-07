@@ -85,13 +85,12 @@ class DDOSMiddleware:
         return response
 
 class LogMiddleware:
-    '''Сохраняет в базе время, юзера, айпи '''
+    '''Сохраняет в базе время, юзера, айпи, тему и форум '''
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        time_now = time.ctime(time.time()-time.timezone)
         ip = request.META.get('REMOTE_ADDR')
         if '/topic/' in request.path:  #юзер в какой то теме
             topic_id = re.findall(r'/topic/(\d+)/', request.path)
@@ -118,30 +117,20 @@ class LogMiddleware:
             msg = Messages.objects.get(id=message_id)
             topic = msg.topic
             forum = topic.forum
-        else:
+        else:  # значит он где-то еще, где неважно
             topic = None
             forum = None
         if request.user.is_authenticated:
             user = Users.objects.get(username=request.user)
         else:
             user = None
-        obj = StatUsers.objects.filter(user=user, ip=ip)
-        if obj:
+        obj = StatUsers.objects.filter(user=user, ip=ip)  # ищем, если есть совпадения, user и ip уникальная пара
+        if obj:                                           # если нашли, просто обновляем инфу
             obj[0].forum=forum
             obj[0].topic=topic
             obj[0].save()
-        else:
+        else:                                              # если не нашли, то создаем новую запись
             StatUsers.objects.create(user=user, ip=ip, forum=forum, topic=topic)
-
-        #todo сделать проверку валидности (сохранность 5 минут) всех записей статистики, в случае просрочки удалить
-
-        # method = request.META.get('REQUEST_METHOD')
-        # url = request.path
-        # path = os.path.join(os.getcwd(), 'log')
-        # file_path = os.path.join(path,'log_user_request.log')
-        # with open(file_path,'a', encoding='utf-8') as file:
-        #     data = 'IP=' + ip + ' in ' + time_now + ' trying ' + method + ' to ' + url + '\n'
-        #     file.write(data)
+        # удаление старых записей (5 минутный интервал от текущего) происходит при отрисовке самой статистики, а не тут
         response = self.get_response(request)
-
         return response

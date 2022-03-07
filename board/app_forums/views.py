@@ -4,21 +4,28 @@ from app_forums.forms import *
 from app_forums.models import *
 from app_profile.models import *
 from django.http import HttpResponseRedirect
-
+from app_forums.statistic_forums import CollectStatisticForums
 
 class ForumsView(generic.ListView):
     '''Список всех форумов'''
     model = Forums
     template_name = 'forums_list.html'
     context_object_name = 'forums'
-    queryset = Forums.objects.all()
-    categories = {}                         # собираем список имеющихся в данный момент категорий форумов, чтобы не показывать пустые
-    for forum in queryset:
-        categories[forum.category.id]=forum.category.name
-    ordered_categories = {}
-    for key in sorted(list(categories.keys())):  # сортируем по id список этих форумов в виде словаря
-        ordered_categories[key] = categories[key]
-    extra_context = {'categories': ordered_categories}
+
+    def get(self, request, *args, **kwargs):
+        '''К стандартному добавляем составление актуального списка категорий и сбор статистики'''
+        queryset = Forums.objects.all()
+        categories = {}  # собираем список имеющихся в данный момент категорий форумов, чтобы не показывать пустые
+        for forum in queryset:
+            categories[forum.category.id] = forum.category.name
+        ordered_categories = {}
+        for key in sorted(list(categories.keys())):  # сортируем по id список этих форумов в виде словаря
+            ordered_categories[key] = categories[key]
+        self.extra_context = {'categories': ordered_categories}
+        statistic = CollectStatisticForums() # сбор статистики
+        print(statistic.data)
+        response = super().get(self, request, *args, **kwargs)
+        return response
 
 
 class ForumDetailView(generic.DetailView):
