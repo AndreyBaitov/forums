@@ -93,6 +93,9 @@ class StatUsers(models.Model):
                              related_name='stat_users', blank=True)
     enter_time = models.DateTimeField(auto_now=True, verbose_name='Время захода')
     ip = models.GenericIPAddressField(protocol='both', unpack_ipv4=True)
+    forum = models.ForeignKey(Forums, null=True, on_delete=models.PROTECT, related_name='forum_stat_users', blank=True)
+    topic = models.ForeignKey(Topics, null=True, on_delete=models.PROTECT, related_name='topic_stat_users', blank=True)
+
 
     def __str__(self):
         return self.ip
