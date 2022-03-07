@@ -1,13 +1,6 @@
 from django.core.exceptions import PermissionDenied
-import time, os, os.path
-# print(os.getcwd())
-# path = os.getcwd()
-# path = os.path.dirname(path)
-# path = os.path.dirname(path)
-# path = os.path.join(path,'app_forums')
-# print(path)
-# import path.models
-from app_forums.models import StatUsers
+import time, os, os.path, re
+from app_forums.models import StatUsers, Forums, Topics, Messages
 from app_profile.models import Users
 
 # class FilterIPMiddleware:
@@ -92,7 +85,7 @@ class DDOSMiddleware:
         return response
 
 class LogMiddleware:
-    '''Логирует в файле лога ip пользователя, время, урл запроса и http метод'''
+    '''Сохраняет в базе время, юзера, айпи '''
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -100,14 +93,46 @@ class LogMiddleware:
     def __call__(self, request):
         time_now = time.ctime(time.time()-time.timezone)
         ip = request.META.get('REMOTE_ADDR')
+        if '/topic/' in request.path:  #юзер в какой то теме
+            topic_id = re.findall(r'/topic/(\d+)/', request.path)
+            topic_id = int(topic_id[0])
+            topic = Topics.objects.get(id=topic_id)
+            forum = topic.forum
+        elif '/forum/' in request.path:  #юзер в каком то форуме
+            forum_id = re.findall(r'/forum/(\d+)/', request.path)
+            forum_id = int(forum_id[0])
+            forum = Forums.objects.get(id=forum_id)
+            topic = None
+        elif '/forums/' in request.path:  #юзер на главной странице форумов
+            topic = None
+            forum = None
+        elif '/edit-message/' in request.path:  #юзер редактирует сообщение
+            message_id = re.findall(r'/edit-message/(\d+)/', request.path)
+            message_id = int(message_id[0])
+            msg = Messages.objects.get(id=message_id)
+            topic = msg.topic
+            forum = topic.forum
+        elif '/delete-message/' in request.path:  # юзер удаляет сообщение
+            message_id = re.findall(r'/delete-message/(\d+)/', request.path)
+            message_id = int(message_id[0])
+            msg = Messages.objects.get(id=message_id)
+            topic = msg.topic
+            forum = topic.forum
+        else:
+            topic = None
+            forum = None
         if request.user.is_authenticated:
             user = Users.objects.get(username=request.user)
-            obj = StatUsers.objects.update_or_create(user=user, ip=ip)
         else:
-            obj = StatUsers.objects.filter(ip=ip,user=None)
-            if obj:
-                obj[0].save()
-        print(obj)
+            user = None
+        obj = StatUsers.objects.filter(user=user, ip=ip)
+        if obj:
+            obj[0].forum=forum
+            obj[0].topic=topic
+            obj[0].save()
+        else:
+            StatUsers.objects.create(user=user, ip=ip, forum=forum, topic=topic)
+
         #todo сделать проверку валидности (сохранность 5 минут) всех записей статистики, в случае просрочки удалить
 
         # method = request.META.get('REQUEST_METHOD')

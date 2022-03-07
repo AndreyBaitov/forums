@@ -74,7 +74,7 @@ class MessagesAdmin(admin.ModelAdmin):
 
 class StatUsersAdmin(admin.ModelAdmin):
     '''Админка статистики по пользователям'''
-    list_display = ['id', 'user','ip', 'enter_time']  # показать в админке только эти поля
+    list_display = ['id', 'user','ip', 'enter_time','forum','topic']  # показать в админке только эти поля
     list_filter = ['ip']  # справа будет возможность выбрать фильтрацию по всем возможным статусам
 
 admin.site.register(Forums, ForumsAdmin)

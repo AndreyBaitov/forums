@@ -105,3 +105,4 @@ class StatUsers(models.Model):
         verbose_name_plural = 'Статистика пользователей на сайте'
         verbose_name = 'Статистика пользователей на сайте'
         ordering = ['-enter_time']
+        unique_together = ['ip','user']
