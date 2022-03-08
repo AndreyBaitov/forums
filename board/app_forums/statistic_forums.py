@@ -10,18 +10,18 @@ class CollectStatisticForums:
         self.data = {}
         self.data['date'] = self.date()
         self.data['time'] = self.time()
-        self.clean_db_stat()
-        # self.data['auth_users'] = self.auth_users()
-        # self.data['hidd_users'] = self.hidd_users()
-        # self.data['guests'] = self.guests()
-        # self.data['users'] = self.data['guests'] + self.data['hidd_users'] + self.data['auth_users']
+        self.clean_db_stat()       # очистка базы от старых записей
+        self.data['users'] = self.users()
+        self.data['guests'] = self.guests()
+        self.data['auth_users'] = self.data['users'] - self.data['guests']
+        self.data['hidd_users'] = self.hidd_users()
         # self.data['total_messages'] = self.total_messages()
         # self.data['total_topics'] = self.total_topics()
         # self.data['total_users'] = self.total_users()
         # self.data['new_user'] = self.new_user()
 
     def date(self):
-        '''Вовзрашает дату'''
+        '''Вовзрашает дату в формате Понедельник, 5 марта 2022'''
         today = time.gmtime(time.time())
         year = today[0]
         month = today[1]
@@ -34,7 +34,7 @@ class CollectStatisticForums:
         return day_week + ', ' + str(day) + ' ' + month + ' ' + str(year)
 
     def time(self):
-        '''Вовзрашает время'''
+        '''Возврашает время в формате 12:54'''
         today = time.gmtime(time.time()-time.timezone)
         hour = today[3]
         minute = today[4]
@@ -55,10 +55,20 @@ class CollectStatisticForums:
             if when_is_done < (now - TIME_OF_STATISTIC):  # Значит запись уже устарела и её надо удалить
                 user.delete()
 
-    def auth_users(self):
+    def users(self):
         '''Возвращает число всех авторизованных пользователей'''
-        pass
+        from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
+        return StatUsers.objects.count()
 
+    def hidd_users(self):
+        '''Возвращает число всех спрятанных пользователей'''
+        from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
+        return len(StatUsers.objects.filter(user__ninja=True))
+
+    def guests(self):
+        '''Возвращает число всех незарегистрированных пользователей'''
+        from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
+        return len(StatUsers.objects.filter(user=None))
 
 if __name__ == '__main__':
     stat = CollectStatisticForums()

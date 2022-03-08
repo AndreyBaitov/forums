@@ -90,7 +90,7 @@ class Messages(models.Model):
 class StatUsers(models.Model):
     '''База, содержащая записи тех пользователей, которые сейчас на форуме.'''
     user = models.ForeignKey('app_profile.Users', db_index=True, null=True, on_delete=models.PROTECT,
-                             related_name='stat_users', blank=True)
+                             related_name='stat_users', related_query_name='statuser', blank=True)
     enter_time = models.DateTimeField(auto_now=True, verbose_name='Время захода')
     ip = models.GenericIPAddressField(protocol='both', unpack_ipv4=True)
     forum = models.ForeignKey(Forums, null=True, on_delete=models.PROTECT, related_name='forum_stat_users', blank=True)
