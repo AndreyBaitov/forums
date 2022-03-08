@@ -15,10 +15,10 @@ class CollectStatisticForums:
         self.data['guests'] = self.guests()
         self.data['auth_users'] = self.data['users'] - self.data['guests']
         self.data['hidd_users'] = self.hidd_users()
-        # self.data['total_messages'] = self.total_messages()
-        # self.data['total_topics'] = self.total_topics()
-        # self.data['total_users'] = self.total_users()
-        # self.data['new_user'] = self.new_user()
+        self.data['total_messages'] = self.total_messages()
+        self.data['total_topics'] = self.total_topics()
+        self.data['total_users'] = self.total_users()
+        self.data['new_user'] = self.new_user()
 
     def date(self):
         '''Вовзрашает дату в формате Понедельник, 5 марта 2022'''
@@ -69,6 +69,26 @@ class CollectStatisticForums:
         '''Возвращает число всех незарегистрированных пользователей'''
         from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
         return len(StatUsers.objects.filter(user=None))
+
+    def total_messages(self):
+        '''Возвращает число всех сообщений на форумах'''
+        from app_forums.models import Messages  # импортируем здесь, иначе взаимная блокировка импортов
+        return Messages.objects.count()
+
+    def total_topics(self):
+        '''Возвращает число всех тем на форумах'''
+        from app_forums.models import Topics  # импортируем здесь, иначе взаимная блокировка импортов
+        return Topics.objects.count()
+
+    def total_users(self):
+        '''Возвращает число всех зарегистрированных на форумах'''
+        from app_profile.models import Users  # импортируем здесь, иначе взаимная блокировка импортов
+        return Users.objects.count()
+
+    def new_user(self):
+        '''Возвращает ник последнего зарегистрированного пользователя'''
+        from app_profile.models import Users  # импортируем здесь, иначе взаимная блокировка импортов
+        return Users.objects.order_by('created_at').last()
 
 if __name__ == '__main__':
     stat = CollectStatisticForums()

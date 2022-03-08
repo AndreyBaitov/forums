@@ -23,6 +23,7 @@ class ForumsView(generic.ListView):
             ordered_categories[key] = categories[key]
         self.extra_context = {'categories': ordered_categories}
         statistic = CollectStatisticForums() # сбор статистики
+        self.extra_context.update(statistic.data)
         print(statistic.data)
         response = super().get(self, request, *args, **kwargs)
         return response
