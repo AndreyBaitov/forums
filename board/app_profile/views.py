@@ -22,6 +22,7 @@ class UserFormView(View):
             email = user_form.cleaned_data['email']
             user_django = User.objects.create_user(username=username,password=password,email=email)
             user_django.save()  # в базе пользователей джанги
+            user_form.cleaned_data['user'] = user_django
             Users.objects.create(**user_form.cleaned_data)  # в нашей базе пользователей
             return HttpResponseRedirect('/forums/')
         else:

@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 class Users(models.Model):
     '''Класс пользователей'''
@@ -15,6 +17,7 @@ class Users(models.Model):
     region = models.ForeignKey('Regions', null=True, on_delete=models.PROTECT,
                                 related_name='regions', blank=True)
     ninja = models.BooleanField(verbose_name='Скрытность пользователя', default=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=User.objects.first().pk, blank=True)
 
     def __str__(self):
         return self.username
