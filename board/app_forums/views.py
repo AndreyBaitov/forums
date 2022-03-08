@@ -55,7 +55,7 @@ class TopicDetailView(generic.DetailView):
         forum = topic.forum
         messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
         if request.user.is_authenticated:
-            looking_user = Users.objects.get(username=str(request.user))
+            looking_user = request.user.app_user
         else:
             looking_user = None
         self.extra_context = {'messages': messages,'forum':forum, 'looking_user': looking_user}
@@ -83,10 +83,9 @@ class MessageAddView(generic.DetailView):
     def post(self, request, pk):
         msg_form = MessageForm(request.POST)
         if request.user.is_authenticated:
-            username = request.user
             if msg_form.is_valid():
                 # заносим в базу
-                user = Users.objects.get(username=username)  # ищем Юзера по базе юзеров, опиралась на совпадающий ник логина
+                user = request.user.app_user  # ищем Юзера
                 msg_form.cleaned_data['user'] = user
                 topic_id = pk                               # ищем тему в которой сделан пост
                 topic = Topics.objects.get(id=topic_id)
@@ -122,7 +121,7 @@ class TopicAddView(generic.DetailView):
             forum = Forums.objects.get(id=forum_id)
             if msg_form.is_valid() and topic_form.is_valid() and msg_form.cleaned_data['title']:  # Поскольку мы в форме title темы не оставили, чтобы не было дубляжа
                                                                                                     # тут мы проверяем, что он не пустой, так как у самой формы MSG он не обязателен
-                user = Users.objects.get(username=request.user)  # ищем Юзера по базе юзеров, опиралась на совпадающий ник логина, потому что напрямую
+                user = request.user.app_user  # ищем Юзера
                 topic_form.cleaned_data['user'] = user      # связываем тему с пользователем и форумом
                 topic_form.cleaned_data['forum'] = forum
                 topic_form.cleaned_data['title'] = msg_form.cleaned_data['title']  #копируем титул сообщения, так как мы не заполняли титул темы
@@ -145,8 +144,8 @@ class MessageEditView(View):
     def get(self, request, msg_id):
         msg = Messages.objects.get(id=msg_id)  # получаем из базы сообщение по айди
         topic = msg.topic
-        user = Users.objects.get(username=str(request.user))
-        if (str(request.user) != str(msg.user)) and (user.status != 'admin'):  # Если Вы редактируете не своё сообщение и вы не админ, то нельзя
+        user = request.user.app_user
+        if user != msg.user and (user.status != 'admin'):  # Если Вы редактируете не своё сообщение и вы не админ, то нельзя
             return HttpResponseRedirect(f'/topic/{topic.id}/')
         msg_form = MessageForm(instance=msg)  # заполняем форму уже имеющимися данными
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id,'topic': topic})
@@ -169,7 +168,7 @@ class MessageDeleteView(View):
         forum = topic.forum
         if not request.user.is_authenticated:  # сначала проверяем, а зареген ли юзер
             return HttpResponseRedirect('/login/')
-        user = Users.objects.get(username=str(request.user))
+        user = request.user.app_user
         if (user.status != 'admin') or (user in forum.moderators.all()):  # модераторам и админам можно всё
             return render(request, 'delete-message.html', context={'msg': msg, 'topic': topic})
         # теперь проверка может ли простой юзер это делать
@@ -184,7 +183,7 @@ class MessageDeleteView(View):
         forum = topic.forum
         if not request.user.is_authenticated:
             return HttpResponseRedirect('/login/')
-        user = Users.objects.get(username=str(request.user))
+        user = request.user.app_user
         # проверка не требуется, поскольку она уже пройдена в методе get
         all_msg = Messages.objects.filter(topic=topic)
         if len(all_msg) == 1:  # это единственное сообщение в теме
@@ -218,7 +217,7 @@ def thanks(request, pk):
     topic = msg.topic
     if not request.user.is_authenticated: # Если благодаришь незалогинившись. Хотя этой иконки не должно быть
         return HttpResponseRedirect(f'/topic/{topic.id}/')
-    user = Users.objects.get(username=str(request.user))
+    user = request.user.app_user
     if user == msg.user:  # Если благодаришь сам себя, то редирект. Хотя этой иконки не должно быть
         return HttpResponseRedirect(f'/topic/{topic.id}/')
     if user in msg.thankers.all():  # Если уже благодарил, то редирект. Хотя этой иконки не должно быть
@@ -234,7 +233,7 @@ def undo_thanks(request, pk):
     topic = msg.topic
     if not request.user.is_authenticated: # Незалогинившись. Хотя этой иконки не должно быть
         return HttpResponseRedirect(f'/topic/{topic.id}/')
-    user = Users.objects.get(username=str(request.user))
+    user = request.user.app_user
     if user == msg.user:  # Если это ты же сам. Хотя этой иконки не должно быть
         return HttpResponseRedirect(f'/topic/{topic.id}/')
     if not user in msg.thankers.all():  # Если тебя нет в списке благодаривших, то редирект. Хотя этой иконки не должно быть

@@ -15,7 +15,7 @@
         {% for topic in topics%}
         <li class="topic">
             <a href="/topic/{{topic.id}}"><h3 class="topic-title">{{topic.title}}</h3></a>
-            {{topic.username}} >> {{topic.created_at}} {{topic.status}} Просмотров {{topic.counted_views}}
+            {{topic.user.username}} >> {{topic.created_at}} {{topic.status}} Просмотров {{topic.counted_views}}
         </li>
         {% endfor%}
     </ul>
