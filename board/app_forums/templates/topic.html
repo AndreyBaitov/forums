@@ -27,6 +27,22 @@
                                                         {{message.status}}
                                                         {% endif %}
                                                         <a href="/delete-message/{{message.id}}/">Удалить сообщение</a>
+
+                                                        {% if request.user.is_authenticated and looking_user != message.user and not looking_user in message.thankers.all%}
+                                                        <form>
+                                                        {% csrf_token %}
+                                                            <button formmethod="post" formaction="/thank-message/{{message.id}}/" type="submit">Поблагодарить</button>
+                                                        </form>
+                                                        {% endif %}
+
+                                                        {% if request.user.is_authenticated and looking_user != message.user and looking_user in message.thankers.all%}
+                                                        <form>
+                                                        {% csrf_token %}
+                                                            <button formmethod="post" formaction="/undo-thank-message/{{message.id}}/" type="submit">Отозвать благодарность</button>
+                                                        </form>
+                                                        {% endif %}
+
+
             <div class="msg">{{message.message}}</div>
         </li>
     {% endfor%}

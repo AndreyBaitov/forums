@@ -76,6 +76,8 @@ class Messages(models.Model):
                                 related_name='topics', blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICE,default='editable')
     topic_start = models.BooleanField(verbose_name='Первое сообщение темы', null=True, blank=True, default=False)
+    thankers = models.ManyToManyField('app_profile.Users', verbose_name='Сказавшие спасибо',
+                                        related_name='thankers', blank=True)
 
     def __str__(self):
         return self.user.username +' in topic: ' + self.topic.title
@@ -85,6 +87,10 @@ class Messages(models.Model):
         verbose_name_plural = 'Сообщения'
         verbose_name = 'Сообщение'
         ordering = ['created_at']
+
+    def list_thankers(self):
+        '''Функция для отображения списка благодаривших в админке, потому что это модель ManyToMany'''
+        return ", ".join([x.username for x in self.thankers.all()])
 
 
 class StatUsers(models.Model):

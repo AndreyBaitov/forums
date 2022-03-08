@@ -50,7 +50,7 @@ class TopicsAdmin(admin.ModelAdmin):
 
 class MessagesAdmin(admin.ModelAdmin):
     '''Админка тем'''
-    list_display = ['id', 'title','topic', 'status']  # показать в админке только эти поля
+    list_display = ['id', 'title','topic', 'status','list_thankers']  # показать в админке только эти поля
     actions = ['mark_as_editable', 'mark_as_closed', 'mark_as_hiddened', 'admin_deleted']  # список функций
     list_filter = ['status']  # справа будет возможность выбрать фильтрацию по всем возможным статусам
     # inlines = [MessagesInline]

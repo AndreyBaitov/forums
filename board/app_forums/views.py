@@ -24,7 +24,6 @@ class ForumsView(generic.ListView):
         self.extra_context = {'categories': ordered_categories}
         statistic = CollectStatisticForums() # сбор статистики
         self.extra_context.update(statistic.data)
-        print(statistic.data)
         response = super().get(self, request, *args, **kwargs)
         return response
 
@@ -55,7 +54,11 @@ class TopicDetailView(generic.DetailView):
         topic = Topics.objects.get(id=topic_id)
         forum = topic.forum
         messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
-        self.extra_context = {'messages': messages,'forum':forum}
+        if request.user.is_authenticated:
+            looking_user = Users.objects.get(username=str(request.user))
+        else:
+            looking_user = None
+        self.extra_context = {'messages': messages,'forum':forum, 'looking_user': looking_user}
         response = super().get(self, request, topic_id, *args, **kwargs)
         topic.counted_views += 1
         topic.save()
@@ -192,4 +195,51 @@ class MessageDeleteView(View):
             msg.delete()
             return HttpResponseRedirect(f'/topic/{topic.id}/')
 
+class ThankMessageView(generic.DetailView):
+    '''Отображение темы после выражения благодарности'''
+    model = Topics
+    template_name = 'topic.html'
+    context_object_name = 'topic'
 
+    def post (self, request, pk, *args, **kwargs):
+        msg = Messages.objects.get(id=pk)
+        topic = msg.topic
+        forum = topic.forum
+        messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
+        self.extra_context = {'messages': messages,'forum':forum}
+        response = super().get(self, request, *args, **kwargs)
+        print (request.user, 'поблагодарил в', msg)
+        topic.save()
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+
+def thanks(request, pk):
+    '''Функция обработки объявления благодарности сообщения'''
+    msg = Messages.objects.get(id=pk)
+    topic = msg.topic
+    if not request.user.is_authenticated: # Если благодаришь незалогинившись. Хотя этой иконки не должно быть
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+    user = Users.objects.get(username=str(request.user))
+    if user == msg.user:  # Если благодаришь сам себя, то редирект. Хотя этой иконки не должно быть
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+    if user in msg.thankers.all():  # Если уже благодарил, то редирект. Хотя этой иконки не должно быть
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+    # все условия соблюдены
+    msg.thankers.add(user)
+    msg.save()
+    return HttpResponseRedirect(f'/topic/{topic.id}/')
+
+def undo_thanks(request, pk):
+    '''Функция обработки снятия благодарности сообщения'''
+    msg = Messages.objects.get(id=pk)
+    topic = msg.topic
+    if not request.user.is_authenticated: # Незалогинившись. Хотя этой иконки не должно быть
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+    user = Users.objects.get(username=str(request.user))
+    if user == msg.user:  # Если это ты же сам. Хотя этой иконки не должно быть
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+    if not user in msg.thankers.all():  # Если тебя нет в списке благодаривших, то редирект. Хотя этой иконки не должно быть
+        return HttpResponseRedirect(f'/topic/{topic.id}/')
+    # все условия соблюдены
+    msg.thankers.remove(user)
+    msg.save()
+    return HttpResponseRedirect(f'/topic/{topic.id}/')

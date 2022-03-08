@@ -9,4 +9,6 @@ urlpatterns = [
     path('forum/<int:pk>/add-topic/', views.TopicAddView.as_view(), name='add-topic'),
     path('edit-message/<int:msg_id>/', views.MessageEditView.as_view(), name='edit-message'),
     path('delete-message/<int:msg_id>/', views.MessageDeleteView.as_view(), name='delete-message'),
+    path('thank-message/<int:pk>/', views.thanks, name='thank-message'),
+    path('undo-thank-message/<int:pk>/', views.undo_thanks, name='undo-thank-message'),
 ]
