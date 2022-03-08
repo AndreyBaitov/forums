@@ -129,7 +129,11 @@
 	</li>
 	<li class="under-forums-item">
 		<div class="statistic-line under-forums-header">ТОПЛИСТ - 5 БЛАГОДАРНОСТЕЙ</div>
-		<div class="statistic-line">Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}, Игорь Тараканов: {{sum}}.</div>
+		<div class="statistic-line">
+			{% for name,id,acknowledgements in list_max_acknowledgements %}
+			<a href="/user/{{id}}/" class="acknowledgements-link">{{name}}: {{acknowledgements}}</a>
+			{% endfor %}
+		</div>
 	</li>
 
 	<li class="statistic-line">

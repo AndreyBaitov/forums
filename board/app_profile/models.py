@@ -18,6 +18,7 @@ class Users(models.Model):
                                 related_name='regions', blank=True)
     ninja = models.BooleanField(verbose_name='Скрытность пользователя', default=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=User.objects.first().pk, blank=True, related_name='app_user')
+    acknowledgements = models.IntegerField(verbose_name='Сколько раз благодарили пользователя',default=0)
 
     def __str__(self):
         return self.username

@@ -225,6 +225,8 @@ def thanks(request, pk):
     # все условия соблюдены
     msg.thankers.add(user)
     msg.save()
+    msg.user.acknowledgements += 1
+    msg.user.save()
     return HttpResponseRedirect(f'/topic/{topic.id}/')
 
 def undo_thanks(request, pk):
@@ -241,4 +243,6 @@ def undo_thanks(request, pk):
     # все условия соблюдены
     msg.thankers.remove(user)
     msg.save()
+    msg.user.acknowledgements -= 1
+    msg.user.save()
     return HttpResponseRedirect(f'/topic/{topic.id}/')

@@ -2,6 +2,7 @@
 
 import time
 from collections import namedtuple
+from django.db.models import Max
 
 class CollectStatisticForums:
     '''Возвращает словарь данных в атрибуте data'''
@@ -19,6 +20,7 @@ class CollectStatisticForums:
         self.data['total_topics'] = self.total_topics()
         self.data['total_users'] = self.total_users()
         self.data['new_user'] = self.new_user()
+        self.data['list_max_acknowledgements'] = self.list_max_acknowledgements()
 
     def date(self):
         '''Вовзрашает дату в формате Понедельник, 5 марта 2022'''
@@ -89,6 +91,27 @@ class CollectStatisticForums:
         '''Возвращает ник последнего зарегистрированного пользователя'''
         from app_profile.models import Users  # импортируем здесь, иначе взаимная блокировка импортов
         return Users.objects.order_by('created_at').last()
+
+    def list_max_acknowledgements(self):
+        '''Возвращает список кортежей имя пользователя/его id/количество спасибо с максимальным количеством благодарностей'''
+        from app_profile.models import Users  # импортируем здесь, иначе взаимная блокировка импортов
+        res = []
+        try:
+            user = Users.objects.order_by('acknowledgements').last()
+            res.append((user.username,user.id, user.acknowledgements))
+            user2 = Users.objects.exclude(username=user.username).order_by('acknowledgements').last()
+            res.append((user2.username, user2.id, user2.acknowledgements))
+            user3 = Users.objects.exclude(username=user.username).exclude(username=user2.username).order_by('acknowledgements').last()
+            res.append((user3.username, user3.id, user3.acknowledgements))
+            user4 = Users.objects.exclude(username=user.username).exclude(username=user2.username).exclude(username=user3.username).order_by(
+                'acknowledgements').last()
+            res.append((user4.username, user4.id, user4.acknowledgements))
+            user5 = Users.objects.exclude(username=user.username).exclude(username=user2.username).exclude(username=user3.username).exclude(username=user4.username).order_by(
+                'acknowledgements').last()
+            res.append((user5.username, user5.id, user5.acknowledgements))
+        except:  # если пользователей меньше 5
+            pass
+        return res
 
 if __name__ == '__main__':
     stat = CollectStatisticForums()
