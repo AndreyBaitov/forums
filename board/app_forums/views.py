@@ -5,6 +5,7 @@ from app_forums.models import *
 from app_profile.models import *
 from django.http import HttpResponseRedirect
 from app_forums.statistic_forums import CollectStatisticForums
+from app_forums.statistic_forums import last_enter_datetime
 
 class ForumsView(generic.ListView):
     '''Список всех форумов'''
@@ -24,6 +25,9 @@ class ForumsView(generic.ListView):
         self.extra_context = {'categories': ordered_categories}
         statistic = CollectStatisticForums() # сбор статистики
         self.extra_context.update(statistic.data)
+        if request.user.is_authenticated:
+            last_enter_time, last_enter_date = last_enter_datetime(request.user.app_user.last_activity)
+            self.extra_context.update({'last_enter_time':last_enter_time,'last_enter_date':last_enter_date})
         response = super().get(self, request, *args, **kwargs)
         return response
 
@@ -131,7 +135,7 @@ class TopicAddView(generic.DetailView):
                 msg_form.cleaned_data['topic'] = topic
                 msg_form.cleaned_data['topic_start'] = True
                 Messages.objects.create(**msg_form.cleaned_data)
-                return HttpResponseRedirect(f'/forum/{forum_id}/')
+                return HttpResponseRedirect(f'/forum/{forum_id}/page/1/')
             else:
                 topics = Topics.objects.filter(forum=forum)
                 return render(request, 'add-topic.html', context={'topics': topics,'msg_form':msg_form,'topic_form':topic_form})
@@ -190,7 +194,7 @@ class MessageDeleteView(View):
         if len(all_msg) == 1:  # это единственное сообщение в теме
             msg.delete()
             topic.delete()
-            return HttpResponseRedirect(f'/forum/{forum.id}/')
+            return HttpResponseRedirect(f'/forum/{forum.id}/page/1/')
         else:
             msg.delete()
             return HttpResponseRedirect(f'/topic/{topic.id}/')
