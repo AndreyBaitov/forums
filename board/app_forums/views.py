@@ -34,12 +34,13 @@ class ForumDetailView(generic.DetailView):
     template_name = 'forum.html'
     context_object_name = 'forum'
 
-    def get(self, request, pk, *args, **kwargs):
+    def get(self, request, pk, page, *args, **kwargs):
         forum_id = pk
         forum = Forums.objects.get(id=forum_id)  # get возвращает только 1 объект, два не может
         topics = Topics.objects.filter(forum=forum)  #  получаем из базы все темы по айди форума
         self.extra_context = {'topics': topics}
-        response = super().get(self, request, forum_id, *args, **kwargs)
+        print(page)
+        response = super().get(self, request, forum_id, page, *args, **kwargs)
         # ваш код с куками подсчета просмотров
         return response
 
