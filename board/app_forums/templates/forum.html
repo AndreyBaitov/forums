@@ -4,12 +4,59 @@
 {% block title %}
    {{forum.name}}
 {% endblock %}
+
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/style_forum.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-forum.css'%}">
+<nav class="nav-above-topics">
+    <div class="small-container nav-above-topics-container">
+        <h2 class="nav-above-topics-title">{{forum.name}}<h2>
+        <div class="list-moderators">Модераторы:
+                             {% for moderator in moderators %}
+                             {% if moderator.status == 'admin' %}
+                            <a class="moderator-link admin-link" href="/user/moderator.id}}/">{{moderator.username}}</a>
+                             {% else %}
+                            <a class="moderator-link" href="/user/moderator.id}}/">{{moderator.username}}</a>
+                             {% endif %}
+                             {% endfor %}
+        </div>
+        <div class="nav-above-topics-forms">
+            <div class="left-part-nav-above-topics-forms">
+                <a class="button-new-theme" title="Создать новую тему" href="/forum/{{forum.id}}/add-topic/">Новая тема</a>
+                <form method="POST" class="search-container">
+                    <input class="inputbox-search" name="keywords-forum" id="keywords-forum" type="search" title="Ключевые слова" value="" placeholder="Поиск в форуме…">
+                    <button class="header-button button-search" type="submit" title="Поиск"><img src="{% static 'img/search.svg'%}"></button>
+                    <button class="header-button button-extented-search" type="submit" title="Расширенный Поиск"><img src="{% static 'img/extended-search.svg' %}"></button>
+                </form>
+            </div>
+            <div class="right-part-nav-above-topics-forms">
+                <div class="forum-topics">{{forum_topics}} темы</div>
+                <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
+                 {% if page_arrow_left %}
+                <div class="page-arrow-left"></div>
+                 {% endif %}
+                 {% for page, number_page in pages %}
+                 {% if page == '...' %}
+                 ... 
+                 {% else %}
+                 <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                 {% endif %}
+                 {% endfor %}
+                <a class="page-link" href="/forum/1/page/2/">1</a>
+                <a class="page-link" href="/forum/1/page/2/">2</a>
+                <a class="page-link" href="/forum/1/page/2/">3</a>
+                <a class="page-link" href="/forum/1/page/2/">4</a>
+                <a class="page-link" href="/forum/1/page/2/">5</a>
+                <a class="page-link" href="/forum/1/page/2/">6</a>
+                <a class="page-link" href="/forum/1/page/2/">7</a>
+                 {% if page_arrow_right %}
+                <div class="page-arrow-right"></div>
+                 {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+ <!-- старое -->
 <div class="container">
-
-    <h2>{{forum.name}}</h2>
-
     {% if topics%}
     <ul class="topics-list">
         {% for topic in topics%}
