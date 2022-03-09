@@ -97,19 +97,11 @@ class CollectStatisticForums:
         from app_profile.models import Users  # импортируем здесь, иначе взаимная блокировка импортов
         res = []
         try:
-            user = Users.objects.order_by('acknowledgements').last()
-            res.append((user.username,user.id, user.acknowledgements))
-            user2 = Users.objects.exclude(username=user.username).order_by('acknowledgements').last()
-            res.append((user2.username, user2.id, user2.acknowledgements))
-            user3 = Users.objects.exclude(username=user.username).exclude(username=user2.username).order_by('acknowledgements').last()
-            res.append((user3.username, user3.id, user3.acknowledgements))
-            user4 = Users.objects.exclude(username=user.username).exclude(username=user2.username).exclude(username=user3.username).order_by(
-                'acknowledgements').last()
-            res.append((user4.username, user4.id, user4.acknowledgements))
-            user5 = Users.objects.exclude(username=user.username).exclude(username=user2.username).exclude(username=user3.username).exclude(username=user4.username).order_by(
-                'acknowledgements').last()
-            res.append((user5.username, user5.id, user5.acknowledgements))
-        except:  # если пользователей меньше 5
+            users = Users.objects.order_by('acknowledgements')
+            for i in range(1,5):
+                user = users[len(users)-i]
+                res.append((user.username, user.id, user.acknowledgements))
+        except Exception as exc:  # если пользователей меньше 5
             pass
         return res
 
