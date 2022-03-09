@@ -70,12 +70,6 @@
 
 		</div>
 	</nav>
-	<div class="current-time">
-		<div class="small-container current-time-container">
-	Текущее время: {{date}} {{time}}
-		</div>
-	</div>
-
     {% block content %}
     {% endblock %}
 
@@ -158,6 +152,31 @@
 
 	<footer class="footer">
 		<div class="container footer-container">
+
+			<div class="collumn-footer">
+				<a href="/about-us/" class="footer-link">О нас</a>
+				<br>
+				<a href="/shipmodelling.ru/" class="footer-link">Верфь на Столе</a>
+				<br>
+				<a href="/articles-of-club/" class="footer-link">Устав клуба</a>
+			</div>
+
+			<div class="collumn-footer central-footer"> 
+				<div class="central-footer-info">&#9742;&nbsp;+7(999)9999999</div>
+				<div class="central-footer-info">&#x2709;&nbsp;&nbsp;&nbsp;емейл@mail.ru</div>
+			</div>
+
+			<div class="collumn-footer">
+				<a class="footer-button" href="/claiming/">Подать заявку в клуб</a>
+
+				<div class="social-nets">
+					<a href="#" class="social-nets-link" id="vk"><img class="social-nets-img" src="{% static 'img/vk.svg'%}"></a>
+					<a href="#" class="social-nets-link" id="odnoklas"><img class="social-nets-img" src="{% static 'img/odnoklas.svg'%}"></a>
+					<a href="#" class="social-nets-link" id="inst"><img class="social-nets-img" src="{% static 'img/inst.svg'%}"></a>
+				</div>
+			</div>
+
+
 		</div>
 	</footer>
 </body>

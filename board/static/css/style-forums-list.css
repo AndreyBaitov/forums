@@ -1,4 +1,33 @@
 /* Форумы*/
+
+.current-time-container {
+	text-align: right;
+	border: none;
+	padding: 3px 0;
+	font-size: 11px;
+}
+
+.login-current-time-container {
+	text-align: left;
+	border: none;
+	padding: 3px 0;
+	font-size: 11px;
+}
+
+.last-enter-time-container {
+	text-align: right;
+	border: none;
+	padding: 3px 0;
+	font-size: 11px;
+}
+
+.logining-user-time{
+	display:  flex;
+	justify-content: space-between;
+	border: none;
+	padding: 0;
+}
+
 /* Заголовок категории*/
 .forums-container {
 	padding: 0;
