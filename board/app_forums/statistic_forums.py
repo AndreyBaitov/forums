@@ -4,13 +4,32 @@ import time
 from collections import namedtuple
 from django.db.models import Max
 
+def clock():
+    '''Возврашает время в формате 12:54. Вынесено в отдельную функцию, чтобы не тащить сбор всей статистики в других обращениях'''
+    today = time.gmtime(time.time() - time.timezone)
+    return time.strftime('%H:%M',today)
+
+def date():
+    '''Вовзрашает дату в формате Понедельник, 5 марта 2022'''
+    today = time.gmtime(time.time())
+    year = today[0]
+    month = today[1]
+    day = today[2]
+    day_week = today[6]
+    month_name = ['месяц','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']
+    day_week_name = ['Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота', 'Воскресенье']
+    month = month_name[month]
+    day_week = day_week_name[day_week]
+    return day_week + ', ' + str(day) + ' ' + month + ' ' + str(year)
+
+
 class CollectStatisticForums:
     '''Возвращает словарь данных в атрибуте data'''
 
     def __init__(self):
         self.data = {}
-        self.data['date'] = self.date()
-        self.data['time'] = self.time()
+        self.data['date'] = date()
+        self.data['time'] = clock()
         self.clean_db_stat()       # очистка базы от старых записей
         self.data['users'] = self.users()
         self.data['guests'] = self.guests()
@@ -21,26 +40,6 @@ class CollectStatisticForums:
         self.data['total_users'] = self.total_users()
         self.data['new_user'] = self.new_user()
         self.data['list_max_acknowledgements'] = self.list_max_acknowledgements()
-
-    def date(self):
-        '''Вовзрашает дату в формате Понедельник, 5 марта 2022'''
-        today = time.gmtime(time.time())
-        year = today[0]
-        month = today[1]
-        day = today[2]
-        day_week = today[6]
-        month_name = ['месяц','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']
-        day_week_name = ['Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота', 'Воскресенье']
-        month = month_name[month]
-        day_week = day_week_name[day_week]
-        return day_week + ', ' + str(day) + ' ' + month + ' ' + str(year)
-
-    def time(self):
-        '''Возврашает время в формате 12:54'''
-        today = time.gmtime(time.time()-time.timezone)
-        hour = today[3]
-        minute = today[4]
-        return str(hour) + ':' + str(minute)
 
     def clean_db_stat(self):
         '''Проверяет не устарели ли записи в таблице StatUsers'''
