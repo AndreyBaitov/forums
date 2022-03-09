@@ -54,7 +54,7 @@
 			<ul class="middle-nav-list">
 				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link">Список форумов</a></li>
 				{% if forum.name%}
-				<li class="middle-nav-item"><a href="/forum/{{forum.id}}" class="middle-nav-link">&raquo; {{forum.name}}</a></li>
+				<li class="middle-nav-item"><a href="/forum/{{forum.id}}/page/1/" class="middle-nav-link">&raquo; {{forum.name}}</a></li>
 				{% endif %}
 				{% if topic.title%}
 				<li class="middle-nav-item"><a href="/topic/{{topic.id}}" class="middle-nav-link">&raquo; {{topic.title}}</a></li>
