@@ -2,7 +2,7 @@
 
 import time
 from collections import namedtuple
-from django.db.models import Max
+
 
 def clock():
     '''Возврашает время в формате 12:54. Вынесено в отдельную функцию, чтобы не тащить сбор всей статистики в других обращениях'''
@@ -21,30 +21,6 @@ def date():
     month = month_name[month]
     day_week = day_week_name[day_week]
     return day_week + ', ' + str(day) + ' ' + month + ' ' + str(year)
-
-def last_enter_datetime(user_last_activity):
-    '''Вовзрашает дату и время в формате ('Понедельник, 5 марта 2022', '17:20') '''
-    ula = user_last_activity  # для сушки кода
-    # преобразовываем хранимый в базе формат даты и времени в struct_time формат
-    when_is_done = namedtuple('overdue_time', 'tm_year tm_mon tm_mday tm_hour tm_min tm_sec tm_wday tm_yday tm_isdst')
-    when_is_done = time.mktime(when_is_done(tm_year=ula.year, tm_mon=ula.month, tm_mday=ula.day, tm_hour=ula.hour, tm_min=ula.minute,
-                     tm_sec=ula.second, tm_wday=0, tm_yday=0, tm_isdst=0))
-    this_day = time.gmtime(when_is_done - time.timezone)
-    year = this_day[0]
-    month = this_day[1]
-    day = this_day[2]
-    day_week = this_day[6]
-    month_name = ['месяц','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']
-    day_week_name = ['Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота', 'Воскресенье']
-    month = month_name[month]
-    day_week = day_week_name[day_week]
-    last_enter_time = time.strftime('%H:%M', this_day)
-    last_enter_date = day_week + ', ' + str(day) + ' ' + month + ' ' + str(year)
-    return (last_enter_time, last_enter_date)
-
-
-
-
 
 class CollectStatisticForums:
     '''Возвращает словарь данных в атрибуте data'''
@@ -80,7 +56,6 @@ class CollectStatisticForums:
                 if user.user:
                     user.user.last_activity = uet
                     user.user.save()
-                    print(user.user.last_activity)
                 user.delete()
 
     def users(self):

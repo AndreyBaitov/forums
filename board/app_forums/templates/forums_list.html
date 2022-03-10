@@ -12,7 +12,7 @@
         </div>
         <div class="last-enter-time">
             <div class="small-container last-enter-time-container">
-        Предыдущее посещение: {{last_enter_date}} {{last_enter_time}}
+        Предыдущее посещение: {{request.user.app_user.last_activity}}
             </div>
         </div>
     </div>
@@ -62,9 +62,9 @@
                         </li>
                     </ul>
                 </li>
-                <li class="forum number-topics">12
+                <li class="forum number-topics">{{forum.sum_topics}}
                 </li>
-                <li class="forum number-messages">437
+                <li class="forum number-messages">{{forum.sum_msg}}
                 </li>
                 <li class="forum last-message">
                     <ul class="last-message-list">
