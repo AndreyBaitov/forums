@@ -58,7 +58,15 @@
                             {{forum.description}}
                         </li>
                         <li class="forum-description-item forum-moderators">
-                            Модераторы: <a href="#">Freelander</a>, <a href="#">Valentin Demin</a>
+                            Модераторы:
+                            {% for moderator in forum.moderators.all%}
+                            {% if moderator.status == 'admin' %}
+                            <a href="/user/{{moderator.id}}/" class="admin-link">{{moderator.username}}</a>
+                            {% else %}
+                            <a href="/user/{{moderator.id}}/" class="moderator-link">{{moderator.username}} </a>
+                            {% endif %}
+                            {% endfor %}
+                            
                         </li>
                     </ul>
                 </li>
@@ -76,7 +84,12 @@
                             {% endif %}
                         </li>
                         <li class="last-message-item last-message-info">
-                            <a href="#">{{forum.last_message.user.username}}</a>  {{forum.last_message.created_at}}
+                            {% if forum.last_message.user.status == 'admin' %}
+                            <a href="/user/{{forum.last_message.user.id}}/" class="admin-link">{{forum.last_message.user.username}} </a>
+                            {% else %}
+                            <a href="/user/{{forum.last_message.user.id}}/" class="user-link">{{forum.last_message.user.username}} </a>
+                            {% endif %}
+                            &raquo; {{forum.last_message.created_at}}
                         </li>
                     </ul>
                 </li>

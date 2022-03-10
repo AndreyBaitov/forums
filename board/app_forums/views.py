@@ -12,7 +12,6 @@ class ForumsView(generic.ListView):
     '''Список всех форумов'''
     model = Forums
     template_name = 'forums_list.html'
-    context_object_name = 'forams'
 
     def get(self, request, *args, **kwargs):
         '''К стандартному добавляем составление актуального списка категорий и сбор статистики'''
@@ -34,9 +33,8 @@ class ForumsView(generic.ListView):
             forum.sum_msg = sum_msg  # сумма сообщений на форуме
             forum.sum_topics = len(Topics.objects.filter(forum=forum))  # сумма тем на форуме
             forum.last_message = Messages.objects.filter(topic__forum=forum).order_by('created_at').last()
+
         self.extra_context.update({'forums':forums})
-
-
         response = super().get(self, request, *args, **kwargs)
         return response
 

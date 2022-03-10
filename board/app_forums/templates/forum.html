@@ -188,11 +188,16 @@
                             {% if topic.last_message.title %}
                             <a href="/message/{{topic.last_message.id}}/">{{topic.last_message.title}}</a>
                             {% else %}
-                            <a href="/message/{{topic.last_message.id}}/">-</a>
+                            <a href="/message/{{topic.last_message.id}}/">Re:...</a>
                             {% endif %}
                         </li>
                         <li class="last-message-item last-message-info">
-                            <a href="/user/{{topic.last_message.user.id}}/">{{topic.last_message.user.username}}</a>  {{topic.last_message.created_at}}
+                           {% if topic.last_message.user.status == 'admin' %}
+                            <a href="/user/{{topic.last_message.user.id}}/" class="admin-link">{{topic.last_message.user.username}} </a>
+                            {% else %}
+                            <a href="/user/{{topic.last_message.user.id}}/" class="user-link">{{topic.last_message.user.username}} </a>
+                            {% endif %}
+                            &raquo; {{topic.last_message.created_at}}
                         </li>
                     </ul>
                 </li>

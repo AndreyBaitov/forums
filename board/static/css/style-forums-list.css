@@ -104,8 +104,14 @@
 	margin-bottom: 3px;
 }
 
-.forum-moderators a {
-	color: #663333;
+.moderator-link{
+    color: #663333;
+    font-weight: normal;
+    font-size: 11px;
+}
+
+.admin-link{
+    color: red;
 }
 
 
