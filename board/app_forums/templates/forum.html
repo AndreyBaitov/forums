@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-forums-list.css'%}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-forum.css'%}">
 <nav class="nav-above-topics">
     <div class="small-container nav-above-topics-container">
@@ -55,8 +56,225 @@
         </div>
     </div>
 </nav>
+ 
+
+{% if advertisements %}
+<section class="forums advertisements">
+    <div class="small-container forums-container">
+        <div class="forums-header">
+            <div class="forums-header-category">Объявления
+            </div>
+            <div class="forums-header-themes">Ответы
+            </div>
+            <div class="forums-header-messages">Просмотры
+            </div>
+            <div class="forums-header-last-mgs">Последнее сообщение
+            </div>
+        </div>
+        <div class="forums-body forums-list">
+            {% for adv in advertisements %}
+            <ul class="forum-info">
+                <li class="forum left-icon-on-stroke">
+                    <img src="{% static 'img/nonewmsg.png'%}">
+                </li>
+                <li class="forum topic-description">
+                    <ul class="topic-description-list">
+                        <li class="topic-description-item topic-name">
+                            <a href="/topic/{{adv.id}}/page/1/">{{adv.title}}</a>
+                        </li>
+                        </li>
+                        <li class="topic-description-item topic-info-str">
+                            <span class="paperclip">&#128206;</span>
+                            <a href="/user/{{adv.user.id}}/" class="topic-info-link">{{adv.user.username}}</a> &raquo; {{adv.datetime_publication}} &raquo; в форуме <a href="/forum/{{adv.forum.id}}/page/1/" class="topic-info-link">{{adv.forum.name}}</a>
+                        </li>
+                    </ul>
+
+                    <ul class="topic-pages">
+                    <!-- Надо подумать как организовать перенос этой информации на страницу-->
+                    <!-- {% for page, number_page in topic_pages %}-->
+                    <!-- {% if page == '...' %}-->
+                    <!-- ... -->
+                    <!-- {% else %}-->
+                    <!-- <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>-->
+                    <!-- {% endif %}-->
+                    <!-- {% endfor %}-->
+                    <li><img src="{% static 'img/pages-icon.svg'%}" class="pages-icon"></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">2</a></li>                       
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">3</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">4</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">5</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">6</a></li>
+                    </ul>
+                </li>
+                <li class="forum number-topics">12
+                </li>
+                <li class="forum number-views">12
+                </li>
+                <li class="forum last-message">
+                    <ul class="last-message-list">
+                        <li class="last-message-item last-message-topic">
+                            <a href="#">Re: Узлы для снастей</a>
+                        </li>
+                        <li class="last-message-item last-message-info">
+                            <a href="#">Олег Серегин</a>  Вт июль 15, 2014 0:10
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+
+
+
+{% if topics %}
+<section class="forums topics">
+    <div class="small-container forums-container">
+        <div class="forums-header">
+            <div class="forums-header-category">Темы
+            </div>
+            <div class="forums-header-themes">Ответы
+            </div>
+            <div class="forums-header-messages">Просмотры
+            </div>
+            <div class="forums-header-last-mgs">Последнее сообщение
+            </div>
+        </div>
+        <div class="forums-body forums-list">
+            {% for topic in topics %}
+            <ul class="forum-info">
+                <li class="forum left-icon-on-stroke">
+                    <img src="{% static 'img/nonewmsg.png'%}">
+                </li>
+                <li class="forum topic-description">
+                    <ul class="topic-description-list">
+                        <li class="topic-description-item topic-name">
+                            <a href="/topic/{{topic.id}}/page/1/">{{topic.title}}</a>
+                        </li>
+                        </li>
+                        <li class="topic-description-item topic-info-str">
+                            <a href="/user/{{topic.user.id}}/" class="topic-info-link">{{topic.user.username}}</a> &raquo; {{topic.created_at}} &raquo; в форуме <a href="/forum/{{topic.forum.id}}/page/1/" class="topic-info-link">{{topic.forum.name}}</a>
+                        </li>
+                    </ul>
+
+                    <ul class="topic-pages">
+                    <!-- Надо подумать как организовать перенос этой информации на страницу-->
+                    <!-- {% for page, number_page in topic_pages %}-->
+                    <!-- {% if page == '...' %}-->
+                    <!-- ... -->
+                    <!-- {% else %}-->
+                    <!-- <li><a class="topic-info-page-link" href="/topic/{topic.id}/page/1/">1</a></li>-->
+                    <!-- {% endif %}-->
+                    <!-- {% endfor %}-->
+                    <li><img src="{% static 'img/pages-icon.svg'%}" class="pages-icon"></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">2</a></li>                       
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">3</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">4</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">5</a></li>
+                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">6</a></li>
+                    </ul>
+                </li>
+                <li class="forum number-topics">{{topic.messages}}
+                </li>
+                <li class="forum number-views">{{topic.counted_views}}
+                </li>
+                <li class="forum last-message">
+                    <ul class="last-message-list">
+                        <li class="last-message-item last-message-topic">
+                            {% if topic.last_message.title %}
+                            <a href="/message/{{topic.last_message.id}}/">{{topic.last_message.title}}</a>
+                            {% else %}
+                            <a href="/message/{{topic.last_message.id}}/">-</a>
+                            {% endif %}
+                        </li>
+                        <li class="last-message-item last-message-info">
+                            <a href="/user/{{topic.last_message.user.id}}/">{{topic.last_message.user.username}}</a>  {{topic.last_message.created_at}}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+</section>
+
+{% else %}
+<h3 style="text-align: center;"> Тем на форуме нет<h3>
+
+{% endif %}
+
+
+
+
+
+
+
+<section class="info-under-forums">
+<div class="small-container under-topics-container">
+
+        <div class="nav-above-topics-forms">
+            <div class="left-part-nav-above-topics-forms">
+                <a class="button-new-theme" title="Создать новую тему">Новая тема</a>
+                <form method="POST" class="sorting-container">
+                <!--ТУТ НАДО ВСТАВИТЬ выпадающий СПИСОК-->
+                </form>
+            </div>
+
+
+            <div class="right-part-nav-above-topics-forms">
+                <div class="forum-topics">{{forum_topics}} темы</div>
+                <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
+                <!-- {% if page_arrow_left %}-->
+                <div class="page-arrow-left"></div>
+                <!-- {% endif %}-->
+                <!-- {% for page, number_page in pages %}-->
+                <!-- {% if page == '...' %}-->
+                <!-- ... -->
+                <!-- {% else %}-->
+                <!-- <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>-->
+                <!-- {% endif %}-->
+                <!-- {% endfor %}-->
+                <a class="page-link" href="/forum/1/page/2/">1</a>
+                <a class="page-link" href="/forum/1/page/2/">2</a>
+                <a class="page-link" href="/forum/1/page/2/">3</a>
+                <a class="page-link" href="/forum/1/page/2/">4</a>
+                <a class="page-link" href="/forum/1/page/2/">5</a>
+                <a class="page-link" href="/forum/1/page/2/">6</a>
+                <a class="page-link" href="/forum/1/page/2/">7</a>
+                <!-- {% if page_arrow_right %}-->
+                <div class="page-arrow-right"></div>
+                <!-- {% endif %}-->
+            </div>
+        </div>
+        <div class="nav-above-topics-forms">
+            <div class="left-part-nav-above-topics-forms">
+                <a href="/forums/" class="topic-info-link"> Вернуться к списку форумов</a>
+            </div>
+            <div class="right-part-nav-above-topics-forms">
+            <button>Перейти</button>
+            </div>
+        </div>
+        <div class="user-permissions">
+        <div class="permission-header">ПРАВА ДОСТУПА</div>
+        <ul class="permission-list">
+            <li class="permission-item">Вы не можете начинать темы</li>
+            <li class="permission-item">Вы не можете отвечать на сообщения</li>
+            <li class="permission-item">Вы не можете редактировать свои сообщения</li>
+            <li class="permission-item">Вы не можете удалять свои сообщения</li>
+            <li class="permission-item">Вы не можете добавлять вложения</li>
+        </ul>
+        </div>
+</div>
+</section>
+
+
+
+
  <!-- старое -->
-<div class="container">
+<!-- <div class="container">
     {% if topics%}
     <ul class="topics-list">
         {% for topic in topics%}
@@ -71,5 +289,5 @@
     {% endif %}
 
     <a href="/forum/{{forum.id}}/add-topic/"><h3 class="topic-title">Добавить новую тему</h3></a>
-</div>
+</div> -->
 {% endblock %}

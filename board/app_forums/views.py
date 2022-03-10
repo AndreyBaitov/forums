@@ -5,19 +5,19 @@ from app_forums.models import *
 from app_profile.models import *
 from django.http import HttpResponseRedirect
 from app_forums.statistic_forums import CollectStatisticForums
-from app_forums.statistic_forums import last_enter_datetime
+
 
 class ForumsView(generic.ListView):
     '''Список всех форумов'''
     model = Forums
     template_name = 'forums_list.html'
-    context_object_name = 'forums'
+    context_object_name = 'forams'
 
     def get(self, request, *args, **kwargs):
         '''К стандартному добавляем составление актуального списка категорий и сбор статистики'''
-        queryset = Forums.objects.all()
+        forums = Forums.objects.all()
         categories = {}  # собираем список имеющихся в данный момент категорий форумов, чтобы не показывать пустые
-        for forum in queryset:
+        for forum in forums:
             categories[forum.category.id] = forum.category.name
         ordered_categories = {}
         for key in sorted(list(categories.keys())):  # сортируем по id список этих форумов в виде словаря
@@ -25,9 +25,19 @@ class ForumsView(generic.ListView):
         self.extra_context = {'categories': ordered_categories}
         statistic = CollectStatisticForums() # сбор статистики
         self.extra_context.update(statistic.data)
-        if request.user.is_authenticated:
-            last_enter_time, last_enter_date = last_enter_datetime(request.user.app_user.last_activity)
-            self.extra_context.update({'last_enter_time':last_enter_time,'last_enter_date':last_enter_date})
+        for forum in forums:
+            topics = Topics.objects.filter(forum=forum)
+            sum_msg = 0
+            for topic in topics:
+                sum_msg += len(Messages.objects.filter(topic=topic))
+            forum.sum_msg = sum_msg
+            forum.sum_topics = len(Topics.objects.filter(forum=forum))
+
+        self.extra_context.update({'forums':forums})
+                # topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
+
+
+
         response = super().get(self, request, *args, **kwargs)
         return response
 
@@ -42,8 +52,10 @@ class ForumDetailView(generic.DetailView):
         forum_id = pk
         forum = Forums.objects.get(id=forum_id)  # get возвращает только 1 объект, два не может
         topics = Topics.objects.filter(forum=forum)  #  получаем из базы все темы по айди форума
+        for topic in topics:
+            topic.messages = len(Messages.objects.filter(topic=topic))-1
+            topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
         self.extra_context = {'topics': topics}
-        print(page)
         response = super().get(self, request, forum_id, page, *args, **kwargs)
         # ваш код с куками подсчета просмотров
         return response
@@ -54,7 +66,7 @@ class TopicDetailView(generic.DetailView):
     template_name = 'topic.html'
     context_object_name = 'topic'
 
-    def get(self, request, pk, *args, **kwargs):
+    def get(self, request, pk, page, *args, **kwargs):
         topic_id = pk
         topic = Topics.objects.get(id=topic_id)
         forum = topic.forum
@@ -64,7 +76,7 @@ class TopicDetailView(generic.DetailView):
         else:
             looking_user = None
         self.extra_context = {'messages': messages,'forum':forum, 'looking_user': looking_user}
-        response = super().get(self, request, topic_id, *args, **kwargs)
+        response = super().get(self, request, topic_id, page, *args, **kwargs)
         topic.counted_views += 1
         topic.save()
         return response
@@ -96,7 +108,7 @@ class MessageAddView(generic.DetailView):
                 topic = Topics.objects.get(id=topic_id)
                 msg_form.cleaned_data['topic'] = topic
                 Messages.objects.create(**msg_form.cleaned_data)
-                return HttpResponseRedirect(f'/topic/{topic_id}/')
+                return HttpResponseRedirect(f'/topic/{topic_id}/page/1/')
             else:
                 return render(request, 'add-message.html', context={'msg_form': msg_form})
         else:
@@ -130,6 +142,7 @@ class TopicAddView(generic.DetailView):
                 topic_form.cleaned_data['user'] = user      # связываем тему с пользователем и форумом
                 topic_form.cleaned_data['forum'] = forum
                 topic_form.cleaned_data['title'] = msg_form.cleaned_data['title']  #копируем титул сообщения, так как мы не заполняли титул темы
+
                 topic = Topics.objects.create(**topic_form.cleaned_data)
                 msg_form.cleaned_data['user'] = user  # связываем сообщение с пользователем и темой и ставим флаг для но_делит
                 msg_form.cleaned_data['topic'] = topic
@@ -151,7 +164,7 @@ class MessageEditView(View):
         topic = msg.topic
         user = request.user.app_user
         if user != msg.user and (user.status != 'admin'):  # Если Вы редактируете не своё сообщение и вы не админ, то нельзя
-            return HttpResponseRedirect(f'/topic/{topic.id}/')
+            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
         msg_form = MessageForm(instance=msg)  # заполняем форму уже имеющимися данными
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id,'topic': topic})
 
@@ -161,7 +174,7 @@ class MessageEditView(View):
         msg_form = MessageForm(request.POST, instance=msg)
         if msg_form.is_valid():
             msg.save()
-            return HttpResponseRedirect(f'/topic/{topic.id}/')
+            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id, 'topic': topic})
 
 class MessageDeleteView(View):
@@ -178,7 +191,7 @@ class MessageDeleteView(View):
             return render(request, 'delete-message.html', context={'msg': msg, 'topic': topic})
         # теперь проверка может ли простой юзер это делать
         if (str(request.user) != str(msg.user)) or (msg.status=='closed'):  # Если Вы удаляете не своё сообщение, то нельзя
-            return HttpResponseRedirect(f'/topic/{topic.id}/')
+            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
         # проверка пройдена
         return render(request, 'delete-message.html', context={'msg': msg,'topic': topic})
 
@@ -197,57 +210,40 @@ class MessageDeleteView(View):
             return HttpResponseRedirect(f'/forum/{forum.id}/page/1/')
         else:
             msg.delete()
-            return HttpResponseRedirect(f'/topic/{topic.id}/')
-
-class ThankMessageView(generic.DetailView):
-    '''Отображение темы после выражения благодарности'''
-    model = Topics
-    template_name = 'topic.html'
-    context_object_name = 'topic'
-
-    def post (self, request, pk, *args, **kwargs):
-        msg = Messages.objects.get(id=pk)
-        topic = msg.topic
-        forum = topic.forum
-        messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
-        self.extra_context = {'messages': messages,'forum':forum}
-        response = super().get(self, request, *args, **kwargs)
-        print (request.user, 'поблагодарил в', msg)
-        topic.save()
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
 
 def thanks(request, pk):
     '''Функция обработки объявления благодарности сообщения'''
     msg = Messages.objects.get(id=pk)
     topic = msg.topic
     if not request.user.is_authenticated: # Если благодаришь незалогинившись. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
     user = request.user.app_user
     if user == msg.user:  # Если благодаришь сам себя, то редирект. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
     if user in msg.thankers.all():  # Если уже благодарил, то редирект. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
     # все условия соблюдены
     msg.thankers.add(user)
     msg.save()
     msg.user.acknowledgements += 1
     msg.user.save()
-    return HttpResponseRedirect(f'/topic/{topic.id}/')
+    return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
 
 def undo_thanks(request, pk):
     '''Функция обработки снятия благодарности сообщения'''
     msg = Messages.objects.get(id=pk)
     topic = msg.topic
     if not request.user.is_authenticated: # Незалогинившись. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
     user = request.user.app_user
     if user == msg.user:  # Если это ты же сам. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
     if not user in msg.thankers.all():  # Если тебя нет в списке благодаривших, то редирект. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/')
+        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
     # все условия соблюдены
     msg.thankers.remove(user)
     msg.save()
     msg.user.acknowledgements -= 1
     msg.user.save()
-    return HttpResponseRedirect(f'/topic/{topic.id}/')
+    return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
