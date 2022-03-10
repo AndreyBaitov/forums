@@ -124,7 +124,7 @@ class CollectStatisticForums:
         res = []
         try:
             users = Users.objects.order_by('acknowledgements')
-            for i in range(1,5):
+            for i in range(1,6):
                 user = users[len(users)-i]
                 res.append((user.username, user.id, user.acknowledgements))
         except Exception as exc:  # если пользователей меньше 5
