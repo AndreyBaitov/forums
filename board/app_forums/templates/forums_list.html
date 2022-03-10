@@ -69,10 +69,14 @@
                 <li class="forum last-message">
                     <ul class="last-message-list">
                         <li class="last-message-item last-message-topic">
-                            <a href="#">Re: Узлы для снастей</a>
+                            {% if forum.last_message.title %}
+                            <a href="/message/{{forum.last_message.id}}/">{{forum.last_message.title}}</a>
+                            {% else %}
+                            <a href="/message/{{forum.last_message.id}}/">Re:...</a>
+                            {% endif %}
                         </li>
                         <li class="last-message-item last-message-info">
-                            <a href="#">Олег Серегин</a>  Вт июль 15, 2014 0:10
+                            <a href="#">{{forum.last_message.user.username}}</a>  {{forum.last_message.created_at}}
                         </li>
                     </ul>
                 </li>

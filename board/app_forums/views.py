@@ -5,6 +5,7 @@ from app_forums.models import *
 from app_profile.models import *
 from django.http import HttpResponseRedirect
 from app_forums.statistic_forums import CollectStatisticForums
+from django.db.models import Q
 
 
 class ForumsView(generic.ListView):
@@ -30,12 +31,10 @@ class ForumsView(generic.ListView):
             sum_msg = 0
             for topic in topics:
                 sum_msg += len(Messages.objects.filter(topic=topic))
-            forum.sum_msg = sum_msg
-            forum.sum_topics = len(Topics.objects.filter(forum=forum))
-
+            forum.sum_msg = sum_msg  # сумма сообщений на форуме
+            forum.sum_topics = len(Topics.objects.filter(forum=forum))  # сумма тем на форуме
+            forum.last_message = Messages.objects.filter(topic__forum=forum).order_by('created_at').last()
         self.extra_context.update({'forums':forums})
-                # topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
-
 
 
         response = super().get(self, request, *args, **kwargs)
