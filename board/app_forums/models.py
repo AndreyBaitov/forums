@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-
+from django.utils import timezone
 class Categories(models.Model):
     '''Категории форумов: Барахолка, Общение, Судомоделизм'''
     name = models.CharField(max_length=100)
@@ -53,6 +53,7 @@ class Topics(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICE, default='opened')
     type = models.CharField(max_length=10, choices=TYPE_CHOICE, default='simple')
     counted_views = models.IntegerField(verbose_name='Количество просмотров', default=0)
+    updated_at = models.DateTimeField(default=timezone.now, verbose_name='Дата последней записи')
 
     def __str__(self):
         return self.title +' in forum: ' + self.forum.name
@@ -72,6 +73,7 @@ class Messages(models.Model):
     title = models.CharField(max_length=100, null=True, blank=True, default='', validators=[check_title_topic], verbose_name='Заголовок сообщения')
     message = models.TextField(default='', verbose_name='Сообщение')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
+    updated_at = models.DateTimeField(default=timezone.now, verbose_name='Дата редактирования')
     topic = models.ForeignKey('Topics', null=True, on_delete=models.CASCADE,
                                 related_name='topics', blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICE,default='editable')

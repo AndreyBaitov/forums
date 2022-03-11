@@ -5,7 +5,8 @@ from app_forums.models import *
 from app_profile.models import *
 from django.http import HttpResponseRedirect
 from app_forums.statistic_forums import CollectStatisticForums
-from django.db.models import Q
+from django.db.models import Q, Count, Subquery, OuterRef, DateTimeField
+import datetime
 
 
 class ForumsView(generic.ListView):
@@ -32,7 +33,7 @@ class ForumsView(generic.ListView):
                 sum_msg += len(Messages.objects.filter(topic=topic))
             forum.sum_msg = sum_msg  # сумма сообщений на форуме
             forum.sum_topics = len(Topics.objects.filter(forum=forum))  # сумма тем на форуме
-            forum.last_message = Messages.objects.filter(topic__forum=forum).order_by('created_at').last()
+            forum.last_message = Messages.objects.filter(topic__forum=forum).order_by('-created_at').last()
 
         self.extra_context.update({'forums':forums})
         response = super().get(self, request, *args, **kwargs)
@@ -48,7 +49,7 @@ class ForumDetailView(generic.DetailView):
     def get(self, request, pk, page, *args, **kwargs):
         forum_id = pk
         forum = Forums.objects.get(id=forum_id)  # get возвращает только 1 объект, два не может
-        topics = Topics.objects.filter(forum=forum)  #  получаем из базы все темы по айди форума
+        topics = Topics.objects.filter(forum=forum).order_by('-updated_at')  #  получаем из базы все темы по айди форума
         for topic in topics:
             topic.messages = len(Messages.objects.filter(topic=topic))-1
             topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
@@ -61,18 +62,18 @@ class TopicDetailView(generic.DetailView):
     '''Отображение темы со всеми её сообщениями'''
     model = Topics
     template_name = 'topic.html'
-    context_object_name = 'topic'
 
     def get(self, request, pk, page, *args, **kwargs):
         topic_id = pk
         topic = Topics.objects.get(id=topic_id)
+        topic.messages = Messages.objects.filter(topic=topic).order_by('created_at')
         forum = topic.forum
         messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
         if request.user.is_authenticated:
             looking_user = request.user.app_user
         else:
             looking_user = None
-        self.extra_context = {'messages': messages,'forum':forum, 'looking_user': looking_user}
+        self.extra_context = {'messages': messages,'forum':forum, 'looking_user': looking_user, 'topic': topic}
         response = super().get(self, request, topic_id, page, *args, **kwargs)
         topic.counted_views += 1
         topic.save()
@@ -104,7 +105,9 @@ class MessageAddView(generic.DetailView):
                 topic_id = pk                               # ищем тему в которой сделан пост
                 topic = Topics.objects.get(id=topic_id)
                 msg_form.cleaned_data['topic'] = topic
-                Messages.objects.create(**msg_form.cleaned_data)
+                msg = Messages.objects.create(**msg_form.cleaned_data)
+                topic.updated_at = msg.created_at
+                topic.save()
                 return HttpResponseRedirect(f'/topic/{topic_id}/page/1/')
             else:
                 return render(request, 'add-message.html', context={'msg_form': msg_form})
@@ -141,10 +144,14 @@ class TopicAddView(generic.DetailView):
                 topic_form.cleaned_data['title'] = msg_form.cleaned_data['title']  #копируем титул сообщения, так как мы не заполняли титул темы
 
                 topic = Topics.objects.create(**topic_form.cleaned_data)
+                topic.updated_at = topic.created_at
+                topic.save()
                 msg_form.cleaned_data['user'] = user  # связываем сообщение с пользователем и темой и ставим флаг для но_делит
                 msg_form.cleaned_data['topic'] = topic
                 msg_form.cleaned_data['topic_start'] = True
-                Messages.objects.create(**msg_form.cleaned_data)
+                msg = Messages.objects.create(**msg_form.cleaned_data)
+                msg.updated_at = msg.created_at
+                msg.save()
                 return HttpResponseRedirect(f'/forum/{forum_id}/page/1/')
             else:
                 topics = Topics.objects.filter(forum=forum)
@@ -170,6 +177,7 @@ class MessageEditView(View):
         topic = msg.topic
         msg_form = MessageForm(request.POST, instance=msg)
         if msg_form.is_valid():
+            msg.updated_at = datetime.datetime.now()
             msg.save()
             return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id, 'topic': topic})
