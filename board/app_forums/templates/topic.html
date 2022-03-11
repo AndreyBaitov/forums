@@ -6,9 +6,161 @@
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/style_topic.css'%}">
-<div class="container">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-forum.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-topic.css'%}">
 
+
+<nav class="nav-above-topics">
+    <div class="small-container nav-above-topics-container">
+        <h2 class="nav-above-forum-title">{{topic.title}}</h2>
+        <div class="list-moderators">Модераторы:
+                            {% for moderator in moderators %}
+                            {% if moderator.status == 'admin' %}
+                            <a class="moderator-link admin-link" href="/user/{{moderator.id}}/">{{moderator.username}}</a>
+                            {% else %}
+                            <a class="moderator-link" href="/user/{{moderator.id}}/">{{moderator.username}}</a>
+                            {% endif %}
+                            {% endfor %}
+        </div>
+
+
+        <div class="nav-above-topics-forms">
+            <div class="left-part-nav-above-topics-forms">
+                <a class="button-new-theme" href="/topic/{{topic.id}}/add-message/" title="Ответить">Ответить</a>
+                <a class="simple-button" href="/topic/{{topic.id}}/settings/" title="Управление темой"><img src="{% static 'img/wrench-icon.svg'%}" class="wrench-icon"></a>
+                <form method="POST" class="search-container">
+                    <input class="inputbox-search" name="keywords-topic" id="keywords-topic" type="search" title="Ключевые слова" value="" placeholder="Поиск в теме…">
+                    <button class="header-button button-search" type="submit" title="Поиск"><img src="{% static 'img/search.svg'%}"></button>
+                    <button class="header-button button-extented-search" type="submit" title="Расширенный Поиск"><img src="{% static 'img/extended-search.svg'%}"></button>
+                </form>
+            </div>
+
+
+            <div class="right-part-nav-above-topics-forms">
+                <div class="forum-topics">{{topic_messages}} сообщений</div>
+                <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
+                {% if page_arrow_left %}
+                <a class="page-link arrow-link" href="/forum/1/page/2/">&lsaquo;</a>
+                {% endif %}
+                {% for page, number_page in pages %}
+                {% if page == '...' %}
+                ...
+                {% else %}
+                <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>-->
+                {% endif %}
+                {% endfor %}
+                <a class="page-link" href="/forum/1/page/2/">1</a>
+                <a class="page-link" href="/forum/1/page/2/">2</a>
+                <a class="page-link" href="/forum/1/page/2/">3</a>
+                <a class="page-link" href="/forum/1/page/2/">4</a>
+                <a class="page-link" href="/forum/1/page/2/">5</a>
+                <a class="page-link" href="/forum/1/page/2/">6</a>
+                <a class="page-link" href="/forum/1/page/2/">7</a>
+                {% if page_arrow_right %}
+                <a class="page-link arrow-link" href="/forum/1/page/2/">&rsaquo;</a>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+
+<section class="topic">
+    <div class="small-container topic-container">
+        <ul class="topic-body msgs-list">
+            {% for msg in topic.messages %}
+            <li class="msg-item">
+                <div class="user-info">
+                    <div class="user-avatar-big">{{msg.user.avatar}}</div>
+                    <div class="username-in-msg">{{msg.user.username}}</div>
+                    <div class="usermsg-in-msg">Сообщений: {{msg.user.sum_msgs}}</div>
+                    <div class="userreg-in-msg">Зарегистрирован: {{msg.user.created_at}}</div>
+                    <div class="userfrom-in-msg">Откуда: {{msg.user.region}}</div>
+                    <div class="user-thank-in-msg">Благодарил(а): {{msg.user.thank}} раз</div>
+                    <div class="to-user-thank-in-msg">Поблагодарили: {{msg.user.to_thank}} раз</div>
+                </div>
+                <div class="msg-context">
+                <ul class="msg-context-list">
+                    <li class="msg-context-item">
+                        {{msg.title}}
+                    </li>
+                    <li class="msg-context-item">
+                        {{msg.number_in_topic}} <img src="{% static 'img/page-icon.png'%}"> {{msg.user.username}} &raquo; {{msg.created_at}} &raquo; {{msg.updated_at}} 
+                    </li>
+                        {{msg.message}}
+                    <li class="msg-context-item">
+                    </li>
+                    <li class="msg-context-item">
+                        {{msg.attachments}}
+                    </li>
+                    <li class="msg-context-item user-visa">
+                        {{msg.user.visa}}
+                    </li>
+                    <li class="msg-context-item">
+                                                       {% if msg.status == 'editable' %}
+                                                        <a href="/edit-message/{{msg.id}}/">{{msg.status}}</a>
+                                                        {% else %}
+                                                        {{msg.status}}
+                                                        {% endif %}
+                                                        <a href="/delete-message/{{msg.id}}/">Удалить сообщение</a>
+
+                                                        {% if request.user.is_authenticated and looking_user != msg.user and not looking_user in msg.thankers.all%}
+                                                        <form>
+                                                        {% csrf_token %}
+                                                            <button formmethod="post" formaction="/thank-message/{{msg.id}}/" type="submit">Поблагодарить</button>
+                                                        </form>
+                                                        {% endif %}
+
+                                                        {% if request.user.is_authenticated and looking_user != msg.user and looking_user in msg.thankers.all%}
+                                                        <form>
+                                                        {% csrf_token %}
+                                                            <button formmethod="post" formaction="/undo-thank-message/{{msg.id}}/" type="submit">Отозвать благодарность</button>
+                                                        </form>
+                                                        {% endif %}
+                    </li>
+                </ul>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>      
+</section>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- старый вариант
+<div class="container">
     <h2>{{topic.title}}</h2>
 
 <ul class="messages-list">
@@ -54,4 +206,3 @@
 
 <h2><a href="/topic/{{topic.id}}/add-message/">Добавить сообщение</a></h2>
 </div>
-{% endblock %}
