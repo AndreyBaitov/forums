@@ -37,7 +37,7 @@
             </div>
             <div class="forums-header-last-mgs">Последнее сообщение
             </div>
-            <div class="forums-header-closed">-
+            <div class="forums-header-closed">&minus;
             </div>
         </div>
         
@@ -46,7 +46,7 @@
             {% for forum in forums %}
             {% if forum.status != 'hiddened' and forum.category.name == category %}
             <ul class="forum-info">
-                <li class="forum new-nonew-img">
+                <li class="forum topic-icon">
                     <img src="{% static 'img/nonewmsg.png'%}">
                 </li>
                 <li class="forum forum-description">
@@ -101,5 +101,70 @@
 
     {% endfor %}  <!-- Цикла категорий -->
 </section>
+
+<!-- Блок подфорумной статистики и логина -->
+
+<section class="info-under-forums">
+<div class="small-container under-forums-container">
+<ul class="under-forums-list">
+    
+    <li class="under-forums-item">
+        <nav class="foot-login">
+            {% if request.user.is_authenticated %}
+                <a href="/logout/" class="foot-login-link button">Выйти</a>
+                <a href="/settings/" class="foot-login-link button">Настройки</a>
+            {% else %}
+                <div class="under-forums-header">
+                    <a href="/login/" class="login-link">ВХОД</a>
+                    |
+                    <a href="/profile/register" class="login-link">РЕГИСТРАЦИЯ</a>
+                </div>
+                <form method="post" action="/foot-login/" class="foot-login-form">
+                    <ul class="foot-login-list">
+                        <li class="foot-login-item">
+                            Имя пользователя: <input type="text" name="username" class="input username-input">
+                        </li>
+                        <li class="foot-login-item">
+                            Пароль: <input type="text" name="password" class="input password-input">
+                        </li>
+                        <li class="foot-login-item">
+                            <a href="/forgot-password/">Забыли пароль?</a> | Запомнить меня
+                        </li>
+                        <li class="foot-login-item">
+                            <input type="checkbox" name="member-me" class="member-checkbox">
+                        </li>
+                        <li class="foot-login-item">
+                            <button type="submit" class="button"><i class="fa fa-sign-in fa-fw" aria-hidden="true"></i>&nbsp; Вход</button>
+                        </li>
+                    </ul>
+                </form>
+            {% endif %}
+
+        </nav>
+    </li>
+
+    <li class="under-forums-item">
+        <div class="statistic-line under-forums-header">КТО СЕЙЧАС НА ФОРУМАХ</div>
+        <div class="statistic-line">В данный момент (5 минут): {{users}} посетителей: {{auth_users}} зарегистрированных, {{hidd_users}} скрытых и {{guests}} гостей</div>
+        <div class="statistic-line">Больше всего посетителей({{max_users}}) было в {{datetime_of_max_users}}</div>
+    </li>
+    <li class="under-forums-item">
+        <div class="statistic-line under-forums-header">СТАТИСТИКА</div>
+        <div class="statistic-line">Всего сообщений: {{total_messages}}. Всего тем: {{total_topics}}. Всего пользователей: {{total_users}}. Новый пользователь: {{new_user}}</div>
+    </li>
+    <li class="under-forums-item">
+        <div class="statistic-line under-forums-header">ТОПЛИСТ - 5 БЛАГОДАРНОСТЕЙ</div>
+        <div class="statistic-line">
+            {% for name,id,acknowledgements in list_max_acknowledgements %}
+            <a href="/user/{{id}}/" class="acknowledgements-link">{{name}}: {{acknowledgements}}</a>
+            {% endfor %}
+        </div>
+    </li>
+
+</ul>
+</div>
+</section>
+
+
 
 {% endblock %}

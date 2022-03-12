@@ -7,6 +7,10 @@ a {
 	color: #663333;
 }
 
+.brown-link:hover {
+	color: #CC3333;
+}
+
 ul {
 	list-style: none;
 	padding: 0;
@@ -19,7 +23,7 @@ html {
 }
 
 .container {
-	max-width: 1200px;
+	max-width: 98%;
 	margin-right: auto;
 	margin-left: auto;
 	height: 100%;
@@ -28,7 +32,7 @@ html {
 }
 
 .small-container {
-	max-width: 1160px;
+	max-width: 96%;
 	margin-right: auto;
 	margin-left: auto;
 	height: 100%;
@@ -170,8 +174,7 @@ body {
 }
 
 .button {
-	padding: 5px 0px;
-	width: 100px;
+	padding: 5px 15px;
 	display:flex;
 	align-items: center;
 	justify-content: center;
@@ -179,6 +182,11 @@ body {
 	background-color: #663333;
 	color: #FAEAC6;
 }
+
+.button:hover{
+	color: #CC3333;
+}
+
 .login-item:first-child{
 	margin-right: 10px;
 }
@@ -206,21 +214,17 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	background-image: url('../img/home.svg');
-	background-repeat: no-repeat;
+	color: #663333;
+	font-size: 11px;
+	font-weight: bold;
 }
 
 .middle-nav-item:not(:last-child){
 	margin-right: 5px;
+	margin-left: 5px;
 }
 .middle-nav-item:first-child{
-	margin-left: 25px;
-}
-
-.middle-nav-link {
-	color: #663333;
-	font-size: 11px;
-	font-weight: bold;
+	margin-left: 5px;
 }
 
 .down-middle-nav-container{
@@ -245,53 +249,19 @@ body {
 	font-size: 10px;
 }
 
+/* Строка навигации прямо над футером */
 
-/* Under-forums-statistic*/
-
-.under-forums-container{
+.nav-above-footer-container{
 	border: none;
-	padding-left: 10px;
-	padding-top: 15px;
-	font-size: 11px;
-}
-
-.under-forums-header {
-	margin-bottom: 5px;
-	color: #663333;
-	font-size: 13px;
-	font-weight: bold;
-}
-
-.under-forums-item{
-	margin-top: 20px;
-}
-
-.foot-login-list{
+	padding: 5px 0;
 	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-}
-.foot-login-item:not(:last-child){
-	margin-right: 5px;
-	color: #663333;
+	justify-content: space-between;
 }
 
-.foot-login-link{
-	display: inline-block;
-	text-align: center;
+.delete-cookies{
+	font-weight: normal;
 }
 
-.member-checkbox {
-	margin-top: 4px;
-}
-
-.statistic-line{
-	margin-top: 5px;
-}
-
-.acknowledgements-link{
-    margin-right: 15px;
-}
 
 /* Footer */
 

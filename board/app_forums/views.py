@@ -46,7 +46,7 @@ class ForumDetailView(generic.DetailView):
     template_name = 'forum.html'
     context_object_name = 'forum'
 
-    def get(self, request, pk, page, *args, **kwargs):
+    def get(self, request, pk: int, page: int, *args, **kwargs):
         forum_id = pk
         forum = Forums.objects.get(id=forum_id)  # get возвращает только 1 объект, два не может
         topics = Topics.objects.filter(forum=forum).order_by('-updated_at')  #  получаем из базы все темы по айди форума

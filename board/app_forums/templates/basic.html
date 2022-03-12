@@ -7,6 +7,7 @@
 		<title>Заголовок</title>
 		<link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css'%}">
 		<link rel="stylesheet" type="text/css" href="{% static 'css/style-basic.css'%}">
+		<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 		<link rel="shortcut icon" href="{% static 'img/favicon.ico'%}" type="image/x-icon">
 	</head>
 
@@ -38,11 +39,11 @@
 			</ul>
 			<ul class="login-list">
 				{% if request.user.is_authenticated %}
-				<li class="login-item"><a href="/logout/" class="login-link button">Выйти</a></li>
+				<li class="login-item"><a href="/logout/" class="login-link button"><i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>&nbsp;Выйти</a></li>
 				<li class="login-item"><a href="/settings/" class="login-link button">Настройки</a></li>
 				{% else %}
-				<li class="login-item"><a href="/login/" class="login-link button">Войти</a></li>
-				<li class="login-item"><a href="/profile/register" class="login-link button">Регистрация</a></li>
+				<li class="login-item"><a href="/login/" class="login-link button"><i class="fa fa-sign-in fa-fw" aria-hidden="true"></i>&nbsp;Войти</a></li>
+				<li class="login-item"><a href="/profile/register" class="login-link button"><i class="fa fa-anchor fa-fw" aria-hidden="true"></i>&nbsp;Регистрация</a></li>
 				{% endif %}
 			<p class="login-username">{{request.user.username}}</p>
 			</ul>
@@ -52,20 +53,24 @@
 	<nav class="middle-nav">
 		<div class="small-container up-middle-nav-container">
 			<ul class="middle-nav-list">
-				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link">Список форумов</a></li>
+				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
 				{% if forum.name%}
-				<li class="middle-nav-item"><a href="/forum/{{forum.id}}/page/1/" class="middle-nav-link">&raquo; {{forum.name}}</a></li>
+				<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
+				<li class="middle-nav-item"><a href="/forum/{{forum.id}}/page/1/" class="middle-nav-link">{{forum.name}}</a></li>
 				{% endif %}
 				{% if topic.title%}
-				<li class="middle-nav-item"><a href="/topic/{{topic.id}}/page/1/" class="middle-nav-link">&raquo; {{topic.title}}</a></li>
+				<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
+				<li class="middle-nav-item"><a href="/topic/{{topic.id}}/page/1/" class="middle-nav-link">{{topic.title}}</a></li>
 				{% endif %}
 			</ul>
 		</div>
 		<div class="small-container down-middle-nav-container">
 			<ul class="down-middle-nav-list">
-				<li class="down-middle-nav-item"><a href="#" class="down-middle-nav-link">Темы без ответов</a></li>
-				<li class="down-middle-nav-item"><a href="#" class="down-middle-nav-link">Активные темы</a></li>
-				<li class="down-middle-nav-item"><a href="#" class="down-middle-nav-link">Ваши сообщения</a></li>
+				<li class="down-middle-nav-item"> <a href="/topics-without-answer/" class="down-middle-nav-link brown-link">Темы без ответов</a></li>
+				<li class="down-middle-nav-item"><a href="/active-topics/" class="down-middle-nav-link brown-link">Активные темы</a></li>
+				{% if request.user.is_authenticated %}
+				<li class="down-middle-nav-item"><a href="/user/{{request.user.app_user.id}}/messages/" class="down-middle-nav-link brown-link">Ваши сообщения</a></li>
+				{% endif %}
 			</ul>
 
 		</div>
@@ -73,81 +78,20 @@
     {% block content %}
     {% endblock %}
 
-<section class="info-under-forums">
-<div class="small-container under-forums-container">
-<ul class="under-forums-list">
-	
-	<li class="under-forums-item">
-		<nav class="foot-login">
-			{% if request.user.is_authenticated %}
-				<a href="/logout/" class="foot-login-link button">Выйти</a>
-				<a href="/settings/" class="foot-login-link button">Настройки</a>
-			{% else %}
-				<div class="under-forums-header">
-					<a href="/login/" class="login-link">ВХОД</a>
-					|
-					<a href="/profile/register" class="login-link">РЕГИСТРАЦИЯ</a>
-				</div>
-				<form method="post" action="/foot-login/" class="foot-login-form">
-					<ul class="foot-login-list">
-						<li class="foot-login-item">
-							Имя пользователя: <input type="text" name="username" class="input username-input">
-						</li>
-						<li class="foot-login-item">
-							Пароль: <input type="text" name="password" class="input password-input">
-						</li>
-						<li class="foot-login-item">
-							<a href="/forgot-password/">Забыли пароль?</a> | Запомнить меня
-						</li>
-						<li class="foot-login-item">
-							<input type="checkbox" name="member-me" class="member-checkbox">
-						</li>
-						<li class="foot-login-item">
-							<button type="submit" class="button">Вход</button>
-						</li>
-					</ul>
-				</form>
-			{% endif %}
 
-		</nav>
-	</li>
-
-	<li class="under-forums-item">
-		<div class="statistic-line under-forums-header">КТО СЕЙЧАС НА ФОРУМАХ</div>
-		<div class="statistic-line">В данный момент (5 минут): {{users}} посетителей: {{auth_users}} зарегистрированных, {{hidd_users}} скрытых и {{guests}} гостей</div>
-		<div class="statistic-line">Больше всего посетителей({{max_users}}) было в {{datetime_of_max_users}}</div>
-	</li>
-	<li class="under-forums-item">
-		<div class="statistic-line under-forums-header">СТАТИСТИКА</div>
-		<div class="statistic-line">Всего сообщений: {{total_messages}}. Всего тем: {{total_topics}}. Всего пользователей: {{total_users}}. Новый пользователь: {{new_user}}</div>
-	</li>
-	<li class="under-forums-item">
-		<div class="statistic-line under-forums-header">ТОПЛИСТ - 5 БЛАГОДАРНОСТЕЙ</div>
-		<div class="statistic-line">
-			{% for name,id,acknowledgements in list_max_acknowledgements %}
-			<a href="/user/{{id}}/" class="acknowledgements-link">{{name}}: {{acknowledgements}}</a>
-			{% endfor %}
-		</div>
-	</li>
-
-	<li class="statistic-line">
-		<a href="/forums/" class="middle-nav-link">Список форумов</a>
-	</li>
-</ul>
-</div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
+<nav class="nav-above-footer">
+		<div class="small-container nav-above-footer-container">
+			<div class="left-part-container">
+			<ul class="middle-nav-list">
+				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
+			</ul>
+			</div>
+			<div class="right-part-container">
+				<ul class="middle-nav-list">
+				<li class="middle-nav-item delete-cookies"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Удалить cookies</a>&nbsp;&nbsp;Часовой пояс: UTC+04:00</li>
+			</ul>
+			</div>
+</nav>
 
 
 	<footer class="footer">
