@@ -5,20 +5,20 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-forums-list.css'%}">
     {% if request.user.is_authenticated%}
     <div class="logining-user-time small-container">
-        <div class="current-time">
-            <div class="small-container login-current-time-container">
+        <div class="current-time time-container">
+            <div class="login-current-time-container ">
         Текущее время: {{date}} {{time}}
             </div>
         </div>
         <div class="last-enter-time">
-            <div class="small-container last-enter-time-container">
+            <div class="last-enter-time-container time-container">
         Предыдущее посещение: {{request.user.app_user.last_activity}}
             </div>
         </div>
     </div>
     {% else %}
     <div class="current-time">
-        <div class="small-container current-time-container">
+        <div class="small-container current-time-container time-container">
     Текущее время: {{date}} {{time}}
         </div>
     </div>

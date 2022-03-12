@@ -1,24 +1,21 @@
 /* Форумы*/
 
-.current-time-container {
-	text-align: right;
+.time-container{
 	border: none;
 	padding: 3px 0;
 	font-size: 11px;
+}
+
+.current-time-container {
+	text-align: right;
 }
 
 .login-current-time-container {
 	text-align: left;
-	border: none;
-	padding: 3px 0;
-	font-size: 11px;
 }
 
 .last-enter-time-container {
 	text-align: right;
-	border: none;
-	padding: 3px 0;
-	font-size: 11px;
 }
 
 .logining-user-time{
