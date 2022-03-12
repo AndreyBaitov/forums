@@ -45,25 +45,47 @@
 				<li class="login-item"><a href="/login/" class="login-link button"><i class="fa fa-sign-in fa-fw" aria-hidden="true"></i>&nbsp;Войти</a></li>
 				<li class="login-item"><a href="/profile/register" class="login-link button"><i class="fa fa-anchor fa-fw" aria-hidden="true"></i>&nbsp;Регистрация</a></li>
 				{% endif %}
-			<p class="login-username">{{request.user.username}}</p>
 			</ul>
 
 		</div>
 	</nav>
 	<nav class="middle-nav">
 		<div class="small-container up-middle-nav-container">
-			<ul class="middle-nav-list">
-				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
-				{% if forum.name%}
-				<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
-				<li class="middle-nav-item"><a href="/forum/{{forum.id}}/page/1/" class="middle-nav-link">{{forum.name}}</a></li>
-				{% endif %}
-				{% if topic.title%}
-				<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
-				<li class="middle-nav-item"><a href="/topic/{{topic.id}}/page/1/" class="middle-nav-link">{{topic.title}}</a></li>
-				{% endif %}
-			</ul>
+			<div class="left-part-container">
+				<ul class="middle-nav-list">
+					<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link bold-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
+					{% if forum.name%}
+					<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
+					<li class="middle-nav-item"><a href="/forum/{{forum.id}}/page/1/" class="middle-nav-link">{{forum.name}}</a></li>
+					{% endif %}
+					{% if topic.title%}
+					<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
+					<li class="middle-nav-item"><a href="/topic/{{topic.id}}/page/1/" class="middle-nav-link">{{topic.title}}</a></li>
+					{% endif %}
+				</ul>
+			</div>
+			
+			{% if request.user.is_authenticated %}
+			<div class="right-part-container">
+				<ul class="middle-nav-list">
+					<li class="middle-nav-item"><a href="/notifications/" class="middle-nav-link brown-link"><i class="fa fa-bell fa-fw" aria-hidden="true"></i> Уведомления</a></li>
+					<li class="middle-nav-item"><a href="/personal-messages/" class="middle-nav-link brown-link"><i class="fa fa-envelope fa-fw" aria-hidden="true"></i> Личные сообщения</a></li>					
+					<li class="middle-nav-item"><img src="{{12}}"></li>		
+					<li class="middle-nav-item"><a href="/personal-messages/" class="middle-nav-link brown-link">{{request.user.username}}</a></li>		
+				</ul>
+			</div>
+			{% endif %}
 		</div>
+
+
+
+
+
+
+
+
+
+
 		<div class="small-container down-middle-nav-container">
 			<ul class="down-middle-nav-list">
 				<li class="down-middle-nav-item"> <a href="/topics-without-answer/" class="down-middle-nav-link brown-link">Темы без ответов</a></li>
@@ -83,16 +105,16 @@
 		<div class="small-container nav-above-footer-container">
 			<div class="left-part-container">
 			<ul class="middle-nav-list">
-				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
+				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link bold-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
 			</ul>
 			</div>
 			<div class="right-part-container">
 				<ul class="middle-nav-list">
 				{% if request.user.is_authenticated %}
-				<li class="middle-nav-item delete-cookies"><a href="/our-commands/" class="middle-nav-link brown-link"><i class="fa fa-shield fa-fw" aria-hidden="true"></i> Наша комманда</a></li>
-				<li class="middle-nav-item delete-cookies"><a href="/users/" class="middle-nav-link brown-link"><i class="fa fa-users fa-fw" aria-hidden="true"></i> Пользователи</a></li>
+				<li class="middle-nav-item"><a href="/our-commands/" class="middle-nav-link brown-link"><i class="fa fa-shield fa-fw" aria-hidden="true"></i> Наша комманда</a></li>
+				<li class="middle-nav-item"><a href="/users/" class="middle-nav-link brown-link"><i class="fa fa-users fa-fw" aria-hidden="true"></i> Пользователи</a></li>
 				{% endif %}
-				<li class="middle-nav-item delete-cookies"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Удалить cookies</a>&nbsp;&nbsp;Часовой пояс: UTC+04:00</li>
+				<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link"><i class="fa fa-trash fa-fw" aria-hidden="true"></i> Удалить cookies</a>&nbsp;&nbsp;Часовой пояс: UTC+04:00</li>
 			</ul>
 			</div>
 </nav>

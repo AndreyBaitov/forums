@@ -191,23 +191,14 @@ body {
 	margin-right: 10px;
 }
 
-.login-username {
-	position: absolute;
-	right: 12%;
-	top: 35px;
-	font-size: 10px;
-	margin: 0;
-	padding: 0;
-}
-
-
 /* Надфорумное меню*/
 
 .up-middle-nav-container{
 	border: none;
 	padding-top: 10px;
 	padding-left: 0;
-	
+	display: flex;
+	justify-content: space-between;
 }
 
 .middle-nav-list {
@@ -216,6 +207,9 @@ body {
 	justify-content: flex-start;
 	color: #663333;
 	font-size: 11px;
+}
+
+.bold-link{
 	font-weight: bold;
 }
 
@@ -258,10 +252,6 @@ body {
 	padding-left: 5px;
 	display: flex;
 	justify-content: space-between;
-}
-
-.delete-cookies{
-	font-weight: normal;
 }
 
 
