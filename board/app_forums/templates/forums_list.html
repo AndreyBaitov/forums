@@ -86,6 +86,8 @@
                         <li class="last-message-item last-message-info">
                             {% if forum.last_message.user.status == 'admin' %}
                             <a href="/user/{{forum.last_message.user.id}}/" class="admin-link">{{forum.last_message.user.username}} </a>
+                            {% elif forum.last_message.user.status == 'moderator' %}
+                            <a href="/user/{{forum.last_message.user.id}}/" class="moderator-link">{{forum.last_message.user.username}} </a>
                             {% else %}
                             <a href="/user/{{forum.last_message.user.id}}/" class="user-link">{{forum.last_message.user.username}} </a>
                             {% endif %}

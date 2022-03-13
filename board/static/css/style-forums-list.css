@@ -103,17 +103,6 @@
 	margin-bottom: 3px;
 }
 
-.moderator-link{
-    color: #663333;
-    font-weight: normal;
-    font-size: 11px;
-}
-
-.admin-link{
-    color: red;
-}
-
-
 .number-topics{
 	width: 8%;
 	text-align: center;

@@ -48,6 +48,19 @@ body {
 	outline: none;
 }
 
+.user-link{
+    color: #663333;
+}
+
+.moderator-link{
+    color: #663333;
+}
+
+.admin-link{
+    color: #CC3333;
+}
+
+
 
 /* Header */
 
