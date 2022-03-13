@@ -103,6 +103,11 @@
 	margin-bottom: 3px;
 }
 
+.forum-moderators a:not(:last-child)::after{
+	content: ',';
+}
+
+
 .number-topics{
 	width: 8%;
 	text-align: center;

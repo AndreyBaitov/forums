@@ -242,6 +242,8 @@ body {
 	border: none;
 	padding-top: 10px;
 	padding-left: 0;
+	display: flex;
+	justify-content: space-between;
 	border-bottom: 1px solid #663333;
 }
 
@@ -261,13 +263,13 @@ body {
 }
 
 .user-avatar-small{
-	width: 30px;
-	height: 30px;
+	width: 20px;
+	height: 20px;
 }
 
 .user-avatar-default{
-	width: 20px;
-	height: 20px;
+	width: 15px;
+	height: 15px;
 }
 
 .left-part-container{

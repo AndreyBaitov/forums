@@ -84,8 +84,9 @@ class CollectStatisticForums:
             if user.user.ninja == True:
                 continue
             res.append((user.user.username,user.user.id,user.user.status,','))
-        username, user_id, status, znak = res.pop(-1)  # удаляем последнюю запись, чтобы заменить запятую на точку
-        res.append((username, user_id, status, '.'))
+        if res:
+            username, user_id, status, znak = res.pop(-1)  # удаляем последнюю запись, чтобы заменить запятую на точку
+            res.append((username, user_id, status, ''))
         return res
 
     def hidd_users(self):

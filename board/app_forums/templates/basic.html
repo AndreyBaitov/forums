@@ -83,24 +83,37 @@
 
 
 
-
-
-
-
-
-
-
 		<div class="small-container down-middle-nav-container">
-			<ul class="down-middle-nav-list">
-				<li class="down-middle-nav-item"> <a href="/topics-without-answer/" class="down-middle-nav-link brown-link">Темы без ответов</a></li>
-				<li class="down-middle-nav-item"><a href="/active-topics/" class="down-middle-nav-link brown-link">Активные темы</a></li>
+			<div class="left-part-container">
+				<ul class="down-middle-nav-list">
+					<li class="down-middle-nav-item"> <a href="/topics-without-answer/" class="down-middle-nav-link brown-link">Темы без ответов</a></li>
+					<li class="down-middle-nav-item"><a href="/active-topics/" class="down-middle-nav-link brown-link">Активные темы</a></li>
+				</ul>
+			</div>
+			<div class="right-part-container">
 				{% if request.user.is_authenticated %}
-				<li class="down-middle-nav-item"><a href="/user/{{request.user.app_user.id}}/messages/" class="down-middle-nav-link brown-link">Ваши сообщения</a></li>
+				<ul class="down-middle-nav-list">
+					<li class="down-middle-nav-item"> <a href="/no-read-messages/" class="down-middle-nav-link brown-link">Непрочитанные сообщения</a></li>
+					<li class="down-middle-nav-item"><a href="/new-messages/" class="down-middle-nav-link brown-link">Новые сообщения</a></li>
+					<li class="down-middle-nav-item"><a href="/my-messages/" class="down-middle-nav-link brown-link">Ваши сообщения</a></li>
+				</ul>
 				{% endif %}
-			</ul>
-
+			</div>
 		</div>
 	</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
     {% block content %}
     {% endblock %}
 
