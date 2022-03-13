@@ -110,10 +110,7 @@
     
     <li class="under-forums-item">
         <nav class="foot-login">
-            {% if request.user.is_authenticated %}
-                <a href="/logout/" class="foot-login-link button">Выйти</a>
-                <a href="/settings/" class="foot-login-link button">Настройки</a>
-            {% else %}
+            {% if not request.user.is_authenticated %}
                 <div class="under-forums-header">
                     <a href="/login/" class="login-link">ВХОД</a>
                     |
@@ -145,8 +142,21 @@
 
     <li class="under-forums-item">
         <div class="statistic-line under-forums-header">КТО СЕЙЧАС НА ФОРУМАХ</div>
-        <div class="statistic-line">В данный момент (5 минут): {{users}} посетителей: {{auth_users}} зарегистрированных, {{hidd_users}} скрытых и {{guests}} гостей</div>
+        <div class="statistic-line">В данный момент (5 минут): {{now_users}} посетителей: {{auth_users}} зарегистрированных, {{hidd_users}} скрытых и {{guests}} гостей</div>
         <div class="statistic-line">Больше всего посетителей ({{max_users}}) было в {{datetime_of_max_users}}</div>
+    </li>
+    <li class="under-forums-item">
+        <div class="statistic-line">
+            Зарегистрированные пользователи:
+            {% for username, user_id, status, znak in users%}
+            {% if status == 'admin'%}
+            <a href="/user/{{user_id}}/" class="admin-link">{{username}}</a>{{znak}}
+            {% else %}
+            <a href="/user/{{user_id}}/" class="user-link">{{username}}</a>{{znak}}
+            {% endif%}
+            {% endfor %}
+        </div>
+        
     </li>
     <li class="under-forums-item">
         <div class="statistic-line under-forums-header">СТАТИСТИКА</div>

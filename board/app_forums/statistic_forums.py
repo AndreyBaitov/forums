@@ -32,9 +32,10 @@ class CollectStatisticForums:
         self.data['date'] = date()
         self.data['time'] = clock()
         self.clean_db_stat()       # очистка базы от старых записей
+        self.data['now_users'] = self.now_users()
         self.data['users'] = self.users()
         self.data['guests'] = self.guests()
-        self.data['auth_users'] = self.data['users'] - self.data['guests']
+        self.data['auth_users'] = self.data['now_users'] - self.data['guests']
         self.data['hidd_users'] = self.hidd_users()
         self.data['total_messages'] = self.total_messages()
         self.data['total_topics'] = self.total_topics()
@@ -42,11 +43,11 @@ class CollectStatisticForums:
         self.data['new_user'] = self.new_user()
         self.data['list_max_acknowledgements'] = self.list_max_acknowledgements()
         try:
-            if self.data['max_users'] < self.data['users']:
-                self.data['max_users'] = self.data['users']
+            if self.data['max_users'] < self.data['now_users']:
+                self.data['max_users'] = self.data['now_users']
                 self.data['datetime_of_max_users'] = self.data['date'] + ' ' + self.data['time']
         except KeyError:
-            self.data['max_users'] = self.data['users']
+            self.data['max_users'] = self.data['now_users']
             self.data['datetime_of_max_users'] = self.data['date'] + ' ' + self.data['time']
         return self.data
 
@@ -68,10 +69,24 @@ class CollectStatisticForums:
                     user.user.save()
                 user.delete()
 
-    def users(self):
+    def now_users(self):
         '''Возвращает число всех авторизованных пользователей'''
         from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
         return StatUsers.objects.count()
+
+    def users(self):
+        '''Возвращает список кортежей всех авторизованных пользователей (имя, id, 'знак препинания')'''
+        from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
+        res = []
+        for user in StatUsers.objects.all():
+            if user.user == None:
+                continue
+            if user.user.ninja == True:
+                continue
+            res.append((user.user.username,user.user.id,user.user.status,','))
+        username, user_id, status, znak = res.pop(-1)  # удаляем последнюю запись, чтобы заменить запятую на точку
+        res.append((username, user_id, status, '.'))
+        return res
 
     def hidd_users(self):
         '''Возвращает число всех спрятанных пользователей'''
