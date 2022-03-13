@@ -1,0 +1,214 @@
+/* Навигация над списком тем */
+
+.nav-above-topics-container{
+    border: none;
+    padding: 0;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.nav-above-topics-title{
+    text-align: center;
+    font-size: 22px;
+}
+
+.list-moderators{
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.moderator-link{
+    font-weight: normal;
+    font-size: 11px;
+}
+
+.admin-link{
+    color: red;
+}
+
+.nav-above-topics-forms{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 5px;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: normal;
+    align-items: center;
+}
+
+.left-part-nav-above-topics-forms{
+    display: flex;
+    align-items: center;
+}
+
+
+.button-new-theme{
+    padding: 5px 20px;
+    text-align: center;
+    background-color: #663333;
+    color: #FAEAC6;
+    border-radius: 10px;
+    font-weight: normal;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.right-part-nav-above-topics-forms{
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.goto-page{
+    font-weight: bold;
+    font-size: 22px;
+    transform: rotate(180deg);
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    margin: 0 3px;
+    color: #d1d1d1;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+}
+
+.page-link{
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    margin: 0 3px;
+    padding: 2px 0px;
+    color: #a1a1a1;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+}
+
+/* Список тем */
+/* Заголовок блока тем такой же как в forums-list.css, если не будет работать, подключить через link*/
+/* Возможно стоит выделить это оформление в отдельный css оформления блоков*/
+/* Блок тем-объявлений */
+
+
+.topic-icon{
+    text-align: center;
+    width: 3%;
+}
+.topic-description{
+    margin-top: 3px;
+    width: 60%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic-pages{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic-info-page-link{
+    font-size: 10px;
+    text-align: center;
+    width: 15px;
+    height: 15px;
+    background-color: white;
+    margin: 0 1px;
+    padding: 2px 3px;
+    color: #a1a1a1;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+    flex-wrap: nowrap;
+}
+
+.pages-icon{
+    width: 15px;
+    height: 15px;
+    margin: 3px 3px 0 3px;
+}
+
+.topic-name {
+    margin-bottom: 3px;
+}
+
+.topic-name a {
+    color: #CC3333;
+}
+
+.topic-info-str {
+    color: #996600;
+    margin-bottom: 3px;
+}
+
+.topic-info-link {
+    color: #663333;
+}
+
+.number-topics{
+    width: 8%;
+    text-align: center;
+    font-size: 13px;
+}
+
+.number-views{
+    width: 8%;
+    text-align: center;
+    font-size: 13px;
+}
+
+.last-message{
+    width: 21%;
+    color: #663333;
+    padding-right: 5px;
+
+}
+
+.last-message-topic {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* обрезает невлазящий текст*/
+}
+/* Блок инфы под темами и над футером */
+
+.under-topics-container{
+    padding: 0;
+    border: none;
+}
+
+.user-permissions{
+    font-size: 12px;
+    color: #663333;
+    margin-bottom: 5px;
+}
+
+.permission-header{
+    margin-bottom: 5px;
+}
+
+.permission-item{
+    margin-bottom: 2px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

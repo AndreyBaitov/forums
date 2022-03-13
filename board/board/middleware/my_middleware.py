@@ -63,7 +63,7 @@ class DDOSMiddleware:
         self.get_response = get_response
         self.user_list = {}  # данные по юзерам по ip ключу [список времен запросов]
         self.max_response = 100  # максимум 100 запрсоов
-        self.max_time = 100     # за последние 100 секунд
+        self.max_time = 10     # за последние 10 секунд
 
     def __call__(self, request):
         time_now = time.time()

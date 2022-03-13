@@ -4,10 +4,10 @@ from .models import *
 
 class UsersAdmin(admin.ModelAdmin):
     '''Админка пользователей'''
-    list_display = ['id', 'username', 'password', 'first_name','second_name','last_name','birthday','region', 'email', 'status', 'created_at','ninja','last_activity']
+    list_display = ['id', 'username', 'password', 'first_name','second_name','last_name','avatar','birthday','region', 'email', 'status', 'created_at','ninja','last_activity']
     list_filter = ['status']  # справа будет возможность выбрать фильтрацию по всем возможным статусам
     fieldsets = (('Данные для логина',{'fields': ('username','password')}),
-                 ('Форумные данные',{'fields': ('status','ninja','user','acknowledgements', 'last_activity'), 'description': 'Форумные данные пользователя'}),
+                 ('Форумные данные',{'fields': ('status','ninja','user','acknowledgements', 'last_activity','avatar'), 'description': 'Форумные данные пользователя'}),
                  ('Личные данные', {'fields':('first_name','second_name','last_name','region'), 'description':'Личные данные пользователя'}),
                  ('Контактные данные', {'fields':('email','birthday'),'classes':['collapse']}),
     )

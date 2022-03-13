@@ -221,6 +221,10 @@ body {
 	margin-left: 5px;
 }
 
+.middle-nav-item:last-child{
+	margin-right: 5px;
+}
+
 .down-middle-nav-container{
 	border: none;
 	padding-top: 10px;
@@ -243,6 +247,21 @@ body {
 	font-size: 10px;
 }
 
+.user-avatar-small{
+	width: 30px;
+	height: 30px;
+}
+
+.user-avatar-default{
+	width: 20px;
+	height: 20px;
+}
+
+.left-part-container{
+	display: flex;
+	align-items: center;
+}
+
 /* Строка навигации прямо над футером */
 
 .nav-above-footer-container{
@@ -253,7 +272,6 @@ body {
 	display: flex;
 	justify-content: space-between;
 }
-
 
 /* Footer */
 

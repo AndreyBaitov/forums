@@ -192,10 +192,10 @@ class MessageDeleteView(View):
         if not request.user.is_authenticated:  # сначала проверяем, а зареген ли юзер
             return HttpResponseRedirect('/login/')
         user = request.user.app_user
-        if (user.status != 'admin') or (user in forum.moderators.all()):  # модераторам и админам можно всё
+        if (user.status == 'admin') or (user in forum.moderators.all()):  # модераторам и админам можно всё
             return render(request, 'delete-message.html', context={'msg': msg, 'topic': topic})
         # теперь проверка может ли простой юзер это делать
-        if (str(request.user) != str(msg.user)) or (msg.status=='closed'):  # Если Вы удаляете не своё сообщение, то нельзя
+        if (request.user.app_user != msg.user) or (msg.status=='closed'):  # Если Вы удаляете не своё сообщение, то нельзя
             return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
         # проверка пройдена
         return render(request, 'delete-message.html', context={'msg': msg,'topic': topic})

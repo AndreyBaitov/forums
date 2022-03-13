@@ -73,7 +73,13 @@
             {% for msg in topic.messages %}
             <li class="msg-item">
                 <div class="user-info">
-                    <div class="user-avatar-big">{{msg.user.avatar}}</div>
+                    <div class="user-avatar">
+                        {% if msg.user.avatar.url != '/upload/img/user.svg' %}`                    
+                        <img class="user-avatar-big" src="{% static msg.user.avatar.url %}">
+                        {% else %}
+                        <img class="user-avatar-big" src="{% static 'img/user.svg' %}">
+                        {% endif %} 
+                    </div>
                     <div class="username-in-msg">{{msg.user.username}}</div>
                     <div class="usermsg-in-msg">Сообщений: {{msg.user.sum_msgs}}</div>
                     <div class="userreg-in-msg">Зарегистрирован: {{msg.user.created_at}}</div>

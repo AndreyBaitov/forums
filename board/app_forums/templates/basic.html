@@ -69,9 +69,13 @@
 			<div class="right-part-container">
 				<ul class="middle-nav-list">
 					<li class="middle-nav-item"><a href="/notifications/" class="middle-nav-link brown-link"><i class="fa fa-bell fa-fw" aria-hidden="true"></i> Уведомления</a></li>
-					<li class="middle-nav-item"><a href="/personal-messages/" class="middle-nav-link brown-link"><i class="fa fa-envelope fa-fw" aria-hidden="true"></i> Личные сообщения</a></li>					
-					<li class="middle-nav-item"><img src="{{12}}"></li>		
-					<li class="middle-nav-item"><a href="/personal-messages/" class="middle-nav-link brown-link">{{request.user.username}}</a></li>		
+					<li class="middle-nav-item"><a href="/personal-messages/" class="middle-nav-link brown-link"><i class="fa fa-envelope fa-fw" aria-hidden="true"></i> Личные сообщения</a></li>
+					{% if request.user.app_user.avatar.url != '/upload/img/user.svg' %}`					
+					<li class="middle-nav-item"><img class="user-avatar-small" src="{% static request.user.app_user.avatar.url %}"></li>
+					{% else %}
+					<li class="middle-nav-item user-avatar-default"><img class="user-avatar-default" src="{% static 'img/user.svg' %}"></li>
+					{% endif %}		
+					<li class="middle-nav-item"><a href="/user/{{request.user.app_user.id}}/" class="middle-nav-link brown-link">{{request.user.username}}</a></li>		
 				</ul>
 			</div>
 			{% endif %}
