@@ -10,14 +10,6 @@
 	text-align: right;
 }
 
-.login-current-time-container {
-	text-align: left;
-}
-
-.last-enter-time-container {
-	text-align: right;
-}
-
 .logining-user-time{
 	display:  flex;
 	justify-content: space-between;
@@ -42,6 +34,8 @@
 	font-weight: bold;
 	margin: -2px -2px;
 	text-align: center;
+	opacity: 1;
+	align-items: center;
 }
 .forums-header-category{
 	width: 63%;
@@ -61,7 +55,19 @@
 	line-height: 1;
 }
 
+.close-category{
+	border: none;
+	background-color: #663333;
+	color: #FAEAC6;
+	cursor: pointer;
+}
+
 /* Блок форумов категории */
+/* forum-list сделан флекс, чтобы работал скрипт по закрытию и раскрытию категорий форумов, он основан на display-none/flex */
+.forums-list{
+	display: flex;
+	flex-direction: column;
+}
 
 .forum-info{
 	display: flex;
@@ -91,6 +97,7 @@
 .forum-name {
 	color: #CC3333;
 	margin-bottom: 3px;
+	font-weight: bold;
 }
 
 .forum-short-description {

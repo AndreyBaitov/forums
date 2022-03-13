@@ -3,26 +3,34 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-forums-list.css'%}">
-    {% if request.user.is_authenticated%}
+<script src="{% static 'js/jquery-3.6.0.js'%}"></script>
+<script src="{% static 'js/scripts-forums-list.js'%}"></script>
+
     <div class="logining-user-time small-container">
-        <div class="current-time time-container">
-            <div class="login-current-time-container ">
+    {% if request.user.is_authenticated%}
+        <div class="left-part-container time-container">
         Текущее время: {{date}} {{time}}
-            </div>
         </div>
-        <div class="last-enter-time">
-            <div class="last-enter-time-container time-container">
+        <div class="right-part-container time-container">
         Предыдущее посещение: {{request.user.app_user.last_activity}}
-            </div>
         </div>
-    </div>
     {% else %}
-    <div class="current-time">
-        <div class="small-container current-time-container time-container">
-    Текущее время: {{date}} {{time}}
+        <div class="left-part-container time-container">
         </div>
+        <div class="right-part-container time-container">
+        Текущее время: {{date}} {{time}}
+        </div>
+    {% endif %}
+    </div>
+    {% if request.user.is_authenticated%}
+    <div class="small-container time-container current-time-container">
+        <a href="/make-all-forums-reading/" class="brown-link">Отметить форумы как прочтённые</a>
     </div>
     {% endif %}
+
+
+
+
 
 <section class="forums">
     {% for key, category in categories.items %}
@@ -37,7 +45,8 @@
             </div>
             <div class="forums-header-last-mgs">Последнее сообщение
             </div>
-            <div class="forums-header-closed">&minus;
+            <div class="forums-header-closed">
+                <button class="close-category roll-button">&minus;</button>
             </div>
         </div>
         
@@ -52,7 +61,7 @@
                 <li class="forum forum-description">
                     <ul class="forum-description-list">
                         <li class="forum-description-item forum-name">
-                            <a href="/forum/{{forum.id}}/page/1/">{{forum.name}}</a>
+                            <a href="/forum/{{forum.id}}/page/1/" class="forum-name">{{forum.name}}</a>
                         </li>
                         <li class="forum-description-item forum-short-description">
                             {{forum.description}}
