@@ -31,27 +31,26 @@
             </div>
             <div class="right-part-nav-above-topics-forms">
                 <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}</div>
+                
+                {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                 <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
-                 {% if page_arrow_left %}
-                <div class="page-arrow-left"></div>
-                 {% endif %}
-                 {% for page, number_page in pages %}
-                 {% if page == '...' %}
-                 ... 
-                 {% else %}
-                 <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
-                 {% endif %}
-                 {% endfor %}
-                <a class="page-link" href="/forum/1/page/2/">1</a>
-                <a class="page-link" href="/forum/1/page/2/">2</a>
-                <a class="page-link" href="/forum/1/page/2/">3</a>
-                <a class="page-link" href="/forum/1/page/2/">4</a>
-                <a class="page-link" href="/forum/1/page/2/">5</a>
-                <a class="page-link" href="/forum/1/page/2/">6</a>
-                <a class="page-link" href="/forum/1/page/2/">7</a>
-                 {% if page_arrow_right %}
-                <div class="page-arrow-right"></div>
-                 {% endif %}
+                {% endif%}
+
+                {% if current_page > 1 %}
+                <a class="page-link page-arrow-left" href="/forum/{{forum.id}}/page/{{current_page|add:-1}}/">&lt;</a>
+                {% endif %}
+
+                    {% for page, number_page in pages %}
+                    {% if page == '...' %}
+                    ... 
+                    {% else %}
+                    <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                {% if current_page < sum_pages %}
+                <a class="page-link page-arrow-right" href="/forum/{{forum.id}}/page/{{current_page|add:1}}/">&gt;</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -230,28 +229,27 @@
 
 
             <div class="right-part-nav-above-topics-forms">
-                <div class="forum-topics">{{forum_topics}} темы</div>
+                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}</div>
+                
+                {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                 <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
-                <!-- {% if page_arrow_left %}-->
-                <div class="page-arrow-left"></div>
-                <!-- {% endif %}-->
-                <!-- {% for page, number_page in pages %}-->
-                <!-- {% if page == '...' %}-->
-                <!-- ... -->
-                <!-- {% else %}-->
-                <!-- <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>-->
-                <!-- {% endif %}-->
-                <!-- {% endfor %}-->
-                <a class="page-link" href="/forum/1/page/2/">1</a>
-                <a class="page-link" href="/forum/1/page/2/">2</a>
-                <a class="page-link" href="/forum/1/page/2/">3</a>
-                <a class="page-link" href="/forum/1/page/2/">4</a>
-                <a class="page-link" href="/forum/1/page/2/">5</a>
-                <a class="page-link" href="/forum/1/page/2/">6</a>
-                <a class="page-link" href="/forum/1/page/2/">7</a>
-                <!-- {% if page_arrow_right %}-->
-                <div class="page-arrow-right"></div>
-                <!-- {% endif %}-->
+                {% endif%}
+
+                {% if current_page > 1 %}
+                <a class="page-link page-arrow-left" href="/forum/{{forum.id}}/page/{{current_page|add:-1}}/">&lt;</a>
+                {% endif %}
+
+                    {% for page, number_page in pages %}
+                    {% if page == '...' %}
+                    ... 
+                    {% else %}
+                    <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                {% if current_page < sum_pages %}
+                <a class="page-link page-arrow-right" href="/forum/{{forum.id}}/page/{{current_page|add:1}}/">&gt;</a>
+                {% endif %}
             </div>
         </div>
         <div class="nav-above-topics-forms">

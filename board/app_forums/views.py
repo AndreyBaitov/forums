@@ -6,7 +6,7 @@ from app_profile.models import *
 from django.http import HttpResponseRedirect
 from app_forums.statistic_forums import CollectStatisticForums
 from django.db.models import Q, Count, Subquery, OuterRef, DateTimeField
-import datetime
+import datetime, math
 
 
 class ForumsView(generic.ListView):
@@ -62,7 +62,16 @@ class ForumDetailView(generic.DetailView):
         for topic in topics:
             topic.messages = len(Messages.objects.filter(topic=topic))-1
             topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
-        self.extra_context = {'topics': topics,'current_page':page, 'sum_topics_on_forum':sum_topics_on_forum, 'sum_ending':theme_ending(sum_topics_on_forum)}
+        sum_pages = math.ceil(sum_topics_on_forum / 15)
+        pages = list_pages(page,sum_pages)
+        self.extra_context = {
+            'topics': topics,
+            'current_page':page,
+            'sum_topics_on_forum':sum_topics_on_forum,
+            'sum_ending':theme_ending(sum_topics_on_forum),
+            'sum_pages':sum_pages,
+            'pages': pages
+                                }
         response = super().get(self, request, forum_id, page, *args, **kwargs)
         # ваш код с куками подсчета просмотров
         return response
@@ -76,7 +85,15 @@ def theme_ending(number:int)->str:
         ending = endings[str(number)[-1]]
     return ending
 
-
+def list_pages(page, sum):
+    '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
+    if sum < 8:
+        return [(str(x),x) for x in range(1,sum+1)]
+    if page < 5:
+        return [('1',1),('2',2),('3',3),('4',4),('5',5),('...',0),(str(sum),sum)]
+    if page > sum-4:
+        return [('1',1),('...',0),(str(sum-5),sum-5),(str(sum-4),sum-4),(str(sum-3),sum-3),(str(sum-2),sum-2),(str(sum-1),sum-1),(str(sum),sum)]
+    return [('1',1), ('...',0), (str(page-2),page-2), (str(page-1),page-1), (str(page),page), (str(page+1),page+1), (str(page+2),page+2), ('...',0),(str(sum),sum)]
 
 
 
