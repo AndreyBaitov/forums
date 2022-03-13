@@ -10,9 +10,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-forum.css'%}">
 <nav class="nav-above-topics">
     <div class="small-container nav-above-topics-container">
-        <h2 class="nav-above-topics-title">{{forum.name}}<h2>
-        <div class="list-moderators">Модераторы:
-                             {% for moderator in moderators %}
+        <h2 class="nav-above-topics-title">{{forum.name}}</h2>
+        <div class="list-moderators"><strong>Модераторы:</strong>
+                             {% for moderator in forum.moderators.all %}
                              {% if moderator.status == 'admin' %}
                             <a class="moderator-link admin-link" href="/user/moderator.id}}/">{{moderator.username}}</a>
                              {% else %}
@@ -156,7 +156,7 @@
                         </li>
                         </li>
                         <li class="topic-description-item topic-info-str">
-                            <a href="/user/{{topic.user.id}}/" class="topic-info-link">{{topic.user.username}}</a> &raquo; {{topic.created_at}} &raquo; в форуме <a href="/forum/{{topic.forum.id}}/page/1/" class="topic-info-link">{{topic.forum.name}}</a>
+                            <a href="/user/{{topic.user.id}}/" class="topic-info-link">{{topic.user.username}}</a> &raquo; {{topic.created_at}}
                         </li>
                     </ul>
 

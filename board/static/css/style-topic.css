@@ -1,7 +1,8 @@
 /* меню над сообщениями */
 
-.nav-above-forum-title{
+.nav-above-forum-title {
     text-align: center;
+    margin: 0;
 }
 
 .simple-button {

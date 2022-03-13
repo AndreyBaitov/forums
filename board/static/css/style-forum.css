@@ -10,20 +10,11 @@
 .nav-above-topics-title{
     text-align: center;
     font-size: 22px;
+    margin: 10px 0;
 }
 
-.list-moderators{
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.moderator-link{
-    font-weight: normal;
-    font-size: 11px;
-}
-
-.admin-link{
-    color: red;
+.list-moderators a:not(:last-child)::after{
+    content: ',';
 }
 
 .nav-above-topics-forms{
