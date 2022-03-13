@@ -69,11 +69,7 @@ class TopicDetailView(generic.DetailView):
         topic.messages = Messages.objects.filter(topic=topic).order_by('created_at')
         forum = topic.forum
         messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
-        if request.user.is_authenticated:
-            looking_user = request.user.app_user
-        else:
-            looking_user = None
-        self.extra_context = {'messages': messages,'forum':forum, 'looking_user': looking_user, 'topic': topic}
+        self.extra_context = {'messages': messages,'forum':forum, 'topic': topic}
         response = super().get(self, request, topic_id, page, *args, **kwargs)
         topic.counted_views += 1
         topic.save()
