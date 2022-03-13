@@ -30,7 +30,7 @@
                 </form>
             </div>
             <div class="right-part-nav-above-topics-forms">
-                <div class="forum-topics">{{forum_topics}} темы</div>
+                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}</div>
                 <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
                  {% if page_arrow_left %}
                 <div class="page-arrow-left"></div>
@@ -90,21 +90,21 @@
                     </ul>
 
                     <ul class="topic-pages">
-                    <!-- Надо подумать как организовать перенос этой информации на страницу-->
-                    <!-- {% for page, number_page in topic_pages %}-->
-                    <!-- {% if page == '...' %}-->
-                    <!-- ... -->
-                    <!-- {% else %}-->
-                    <!-- <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>-->
-                    <!-- {% endif %}-->
-                    <!-- {% endfor %}-->
-                    <li><img src="{% static 'img/pages-icon.svg'%}" class="pages-icon"></li>
-                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>
-                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">2</a></li>                       
-                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">3</a></li>
-                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">4</a></li>
-                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">5</a></li>
-                    <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">6</a></li>
+                        <!-- Надо подумать как организовать перенос этой информации на страницу-->
+                        <!-- {% for page, number_page in topic_pages %}-->
+                        <!-- {% if page == '...' %}-->
+                        <!-- ... -->
+                        <!-- {% else %}-->
+                        <!-- <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>-->
+                        <!-- {% endif %}-->
+                        <!-- {% endfor %}-->
+                        <li><img src="{% static 'img/pages-icon.svg'%}" class="pages-icon"></li>
+                        <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">1</a></li>
+                        <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">2</a></li>                       
+                        <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">3</a></li>
+                        <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">4</a></li>
+                        <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">5</a></li>
+                        <li><a class="topic-info-page-link" href="/topic/{adv.id}/page/1/">6</a></li>
                     </ul>
                 </li>
                 <li class="forum number-topics">12

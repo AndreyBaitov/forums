@@ -49,14 +49,42 @@ class ForumDetailView(generic.DetailView):
     def get(self, request, pk: int, page: int, *args, **kwargs):
         forum_id = pk
         forum = Forums.objects.get(id=forum_id)  # get возвращает только 1 объект, два не может
-        topics = Topics.objects.filter(forum=forum).order_by('-updated_at')  #  получаем из базы все темы по айди форума
+        all_topics = Topics.objects.filter(forum=forum).order_by('-updated_at')
+        sum_topics_on_forum = len(all_topics)
+        if sum_topics_on_forum < 16:    # Если тем меньше чем на 1 страницу, то показываем все темы
+            topics = all_topics
+            page = 1                # пофигу на какую страницу шел пользователь, мы его перешлём на 1
+        else:                       # иначе начинаем смотреть куда шел пользователь и даём ему список тем
+            try:
+                topics = Topics.objects.filter(forum=forum).order_by('-updated_at')[0+(page-1)*15:15+(page-1)*15]  #  получаем из базы все темы по айди форума
+            except IndexError:      # суда попадаем при краевом случае на последней странице
+                topics = Topics.objects.filter(forum=forum).order_by('-updated_at')[0 + (page - 1) * 15:]
         for topic in topics:
             topic.messages = len(Messages.objects.filter(topic=topic))-1
             topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
-        self.extra_context = {'topics': topics}
+        self.extra_context = {'topics': topics,'current_page':page, 'sum_topics_on_forum':sum_topics_on_forum, 'sum_ending':theme_ending(sum_topics_on_forum)}
         response = super().get(self, request, forum_id, page, *args, **kwargs)
         # ваш код с куками подсчета просмотров
         return response
+
+def theme_ending(number:int)->str:
+    '''Функция возвращающая строковую переменную окончания слова тем в зависимости от количества'''
+    endings = {'1':'а','2':'ы','3':'ы','4':'ы','5':'','6':'','7':'','8':'','9':'','0':''}
+    if number > 5 and number < 20:
+        ending = ''
+    else:
+        ending = endings[str(number)[-1]]
+    return ending
+
+
+
+
+
+
+
+
+
+
 
 class TopicDetailView(generic.DetailView):
     '''Отображение темы со всеми её сообщениями'''
