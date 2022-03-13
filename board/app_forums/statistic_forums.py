@@ -27,6 +27,8 @@ class CollectStatisticForums:
 
     def __init__(self):
         self.data = {}
+
+    def run (self):
         self.data['date'] = date()
         self.data['time'] = clock()
         self.clean_db_stat()       # очистка базы от старых записей
@@ -39,6 +41,14 @@ class CollectStatisticForums:
         self.data['total_users'] = self.total_users()
         self.data['new_user'] = self.new_user()
         self.data['list_max_acknowledgements'] = self.list_max_acknowledgements()
+        try:
+            if self.data['max_users'] < self.data['users']:
+                self.data['max_users'] = self.data['users']
+                self.data['datetime_of_max_users'] = self.data['date'] + ' ' + self.data['time']
+        except KeyError:
+            self.data['max_users'] = self.data['users']
+            self.data['datetime_of_max_users'] = self.data['date'] + ' ' + self.data['time']
+        return self.data
 
     def clean_db_stat(self):
         '''Проверяет не устарели ли записи в таблице StatUsers'''

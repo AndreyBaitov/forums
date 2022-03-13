@@ -13,6 +13,7 @@ class ForumsView(generic.ListView):
     '''Список всех форумов'''
     model = Forums
     template_name = 'forums_list.html'
+    statistic = CollectStatisticForums()
 
     def get(self, request, *args, **kwargs):
         '''К стандартному добавляем составление актуального списка категорий и сбор статистики'''
@@ -24,8 +25,8 @@ class ForumsView(generic.ListView):
         for key in sorted(list(categories.keys())):  # сортируем по id список этих форумов в виде словаря
             ordered_categories[key] = categories[key]
         self.extra_context = {'categories': ordered_categories}
-        statistic = CollectStatisticForums() # сбор статистики
-        self.extra_context.update(statistic.data)
+        stat_data = self.statistic.run() # сбор статистики
+        self.extra_context.update(stat_data)
         for forum in forums:
             topics = Topics.objects.filter(forum=forum)
             sum_msg = 0
