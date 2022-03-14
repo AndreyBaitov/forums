@@ -61,6 +61,7 @@ class ForumDetailView(generic.DetailView):
                 topics = Topics.objects.filter(forum=forum).order_by('-updated_at')[0 + (page - 1) * 15:]
         for topic in topics:
             topic.messages = len(Messages.objects.filter(topic=topic))-1
+            topic.pages = list_pages(1, math.ceil(topic.messages / 50))
             topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
         sum_pages = math.ceil(sum_topics_on_forum / 15)
         pages = list_pages(page,sum_pages)
@@ -87,6 +88,8 @@ def theme_ending(number:int)->str:
 
 def list_pages(page, sum):
     '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
+    if sum == 1:
+        return None
     if sum < 8:
         return [(str(x),x) for x in range(1,sum+1)]
     if page < 5:
