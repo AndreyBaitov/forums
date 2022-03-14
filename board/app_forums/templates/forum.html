@@ -30,7 +30,7 @@
                 </form>
             </div>
             <div class="right-part-nav-above-topics-forms">
-                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}</div>
+                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}&nbsp;</div>
                 
                 {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                 <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
@@ -44,7 +44,11 @@
                     {% if page == '...' %}
                     ... 
                     {% else %}
-                    <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                        {% if number_page == current_page %}
+                        <a class="current-page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                        {% else %}
+                        <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                        {% endif %}
                     {% endif %}
                     {% endfor %}
 
@@ -229,7 +233,7 @@
 
 
             <div class="right-part-nav-above-topics-forms">
-                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}</div>
+                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}&nbsp;</div>
                 
                 {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                 <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
@@ -243,7 +247,11 @@
                     {% if page == '...' %}
                     ... 
                     {% else %}
-                    <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                        {% if number_page == current_page %}
+                        <a class="current-page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                        {% else %}
+                        <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                        {% endif %}
                     {% endif %}
                     {% endfor %}
 
@@ -273,24 +281,4 @@
 </div>
 </section>
 
-
-
-
- <!-- старое -->
-<!-- <div class="container">
-    {% if topics%}
-    <ul class="topics-list">
-        {% for topic in topics%}
-        <li class="topic">
-            <a href="/topic/{{topic.id}}"><h3 class="topic-title">{{topic.title}}</h3></a>
-            {{topic.user.username}} >> {{topic.created_at}} {{topic.status}} Просмотров {{topic.counted_views}}
-        </li>
-        {% endfor%}
-    </ul>
-    {% else %}
-    <h3>Тем на форуме нет</h3>
-    {% endif %}
-
-    <a href="/forum/{{forum.id}}/add-topic/"><h3 class="topic-title">Добавить новую тему</h3></a>
-</div> -->
 {% endblock %}

@@ -183,10 +183,10 @@ class TopicAddView(generic.DetailView):
                 topic_form.cleaned_data['user'] = user      # связываем тему с пользователем и форумом
                 topic_form.cleaned_data['forum'] = forum
                 topic_form.cleaned_data['title'] = msg_form.cleaned_data['title']  #копируем титул сообщения, так как мы не заполняли титул темы
-
                 topic = Topics.objects.create(**topic_form.cleaned_data)
                 topic.updated_at = topic.created_at
                 topic.save()
+
                 msg_form.cleaned_data['user'] = user  # связываем сообщение с пользователем и темой и ставим флаг для но_делит
                 msg_form.cleaned_data['topic'] = topic
                 msg_form.cleaned_data['topic_start'] = True
