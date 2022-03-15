@@ -160,11 +160,11 @@
         <div class="statistic-line">
             {% if users%}
             Зарегистрированные пользователи:
-                {% for username, user_id, status, znak in users%}
-                {% if status == 'admin'%}
-                <a href="/user/{{user_id}}/" class="admin-link">{{username}}</a>{{znak}}
+                {% for user in users%}
+                {% if user.user.status == 'admin'%}
+                <a href="/user/{{user.user.id}}/" class="admin-link">{{user.user.username}}</a>
                 {% else %}
-                <a href="/user/{{user_id}}/" class="user-link">{{username}}</a>{{znak}}
+                <a href="/user/{{user.user.id}}/" class="user-link">{{user.user.username}}</a>
                 {% endif%}
                 {% endfor %}
             {% endif%}

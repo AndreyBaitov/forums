@@ -75,19 +75,10 @@ class CollectStatisticForums:
         return StatUsers.objects.count()
 
     def users(self):
-        '''Возвращает список кортежей всех авторизованных пользователей (имя, id, 'знак препинания')'''
+        '''Возвращает список всех авторизованных, но не прячушихся пользователей'''
         from app_forums.models import StatUsers  # импортируем здесь, иначе взаимная блокировка импортов
-        res = []
-        for user in StatUsers.objects.all():
-            if user.user == None:
-                continue
-            if user.user.ninja == True:
-                continue
-            res.append((user.user.username,user.user.id,user.user.status,','))
-        if res:
-            username, user_id, status, znak = res.pop(-1)  # удаляем последнюю запись, чтобы заменить запятую на точку
-            res.append((username, user_id, status, ''))
-        return res
+        users = StatUsers.objects.exclude(user=None).exclude(user__ninja=True)
+        return users
 
     def hidd_users(self):
         '''Возвращает число всех спрятанных пользователей'''

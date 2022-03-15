@@ -114,6 +114,10 @@
 	content: ',';
 }
 
+.statistic-line a:not(:last-child)::after{
+	content: ',';
+}
+
 
 .number-topics{
 	width: 8%;
