@@ -39,8 +39,22 @@
     padding-top: 1++0px;
 }
 
+.user-info-item a{
+    font-weight: bold;
+}
 
+.user-info-item:first-child{
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
 
+.user-info-item:not(:first-child){
+    padding-bottom: 1px;
+}
+
+.user-info-item:last-child{
+    padding-bottom: 10px;
+}
 
 /* Само тело сообщения*/
 
@@ -54,9 +68,35 @@
     width: 80%;
 }
 
+.msg-context-list{
+    padding-left: 35px;
+}
 
-.user-visa{
+.msg-context-item{
+    font-size: 11px;
+    padding-bottom: 10px;
+}
+
+.msg-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.msg-context-header{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.msg-context-info{
+    font-size: 10px;
+}
+
+.msg-context-visa{
     border-top: 1px solid #d1d1d1;
 }
 
+.msg-context-updated{
+    text-align: right;
+}
 

@@ -93,7 +93,7 @@
                             {% endif %}
                         </li>
                         <li class="user-info-item">
-                            Сообщений: {{msg.user.msgs}}
+                            Сообщений: <a href="/user-msgs/{{msg.user.id}}/" class="brown-link">{{msg.user.msgs}}</a>
                         </li>
                         <li class="user-info-item">
                             Зарегистрирован: {{msg.user.created_at}}
@@ -102,53 +102,71 @@
                             Откуда: {{msg.user.region}}
                         </li>
                         <li class="user-info-item">
-                            Благодарил(а): {{msg.user.thanks}} раз{{msg.thanks_ending}}
+                            Благодарил(а): <a href="/user-thanks/{{msg.user.id}}/" class="brown-link">{{msg.user.thanks}} раз{{msg.thanks_ending}}</a>
                         </li>
                         <li class="user-info-item">
-                            Поблагодарили: {{msg.user.acknowledgements}} раз{{msg.acknowledgements_ending}}
+                            Поблагодарили: <a href="/user-acknowledgements/{{msg.user.id}}/" class="brown-link">{{msg.user.acknowledgements}} раз{{msg.acknowledgements_ending}}</a>
                         </li>
                     </ul>
                 </div>
                 <div class="msg-context">
                 <ul class="msg-context-list">
-                    <li class="msg-context-item">
-                        {{msg.title}}
+                    <li class="msg-context-item msg-header">
+                        <div class="left-part-container">
+                                <ul>
+                                    <li class="msg-context-header">{{msg.title}}</li>
+                                    <li class="msg-context-info">
+                                        #{{msg.number_in_topic}} <!--Сделать тут всплывающее окно с ссылкой на сообщение-->
+                                        <i class="fa fa-file fa-fw" aria-hidden="true"></i> 
+                                        {% if msg.user.status == 'admin' %}
+                                            <a class="admin-link" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
+                                            {% else %}
+                                            <a class="user-link brown-link" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
+                                        {% endif %}
+                                        &raquo; {{msg.created_at}} 
+                                    </li>
+                        </div>
+                        <div class="right-part-container">
+                                {% if msg.status == 'editable' %}
+                                <a href="/edit-message/{{msg.id}}/">{{msg.status}}</a>
+                                {% else %}
+                                {{msg.status}}
+                                {% endif %}
+                                <a href="/delete-message/{{msg.id}}/">Удалить сообщение</a>
+
+                                {% if request.user.is_authenticated and request.user.app_user != msg.user and not request.user.app_user in msg.thankers.all%}
+                                <form>
+                                {% csrf_token %}
+                                    <button formmethod="post" formaction="/thank-message/{{msg.id}}/" type="submit">Поблагодарить</button>
+                                </form>
+                                {% endif %}
+
+                                {% if request.user.is_authenticated and request.user.app_user != msg.user and request.user.app_user in msg.thankers.all%}
+                                <form>
+                                {% csrf_token %}
+                                    <button formmethod="post" formaction="/undo-thank-message/{{msg.id}}/" type="submit">Отозвать благодарность</button>
+                                </form>
+                                {% endif %}
+
+                        </div>
                     </li>
-                    <li class="msg-context-item">
-                        {{msg.number_in_topic}} <img src="{% static 'img/page-icon.png'%}"> {{msg.user.username}} &raquo; {{msg.created_at}} &raquo; {{msg.updated_at}} 
-                    </li>
+                    <li class="msg-context-item msg-context-context">
                         {{msg.message}}
-                    <li class="msg-context-item">
                     </li>
-                    <li class="msg-context-item">
+                    <li class="msg-context-item msg-context-updated">
+                        {% if msg.created_at != msg.updated_at%}
+                        Редактировалось: {{msg.updated_at}}
+                        {% endif %}
+                    </li>
+                    <li class="msg-context-item msg-context-attachment">
                         {{msg.attachments}}
                     </li>
-                    <li class="msg-context-item user-visa">
+                    {% if msg.user.visa %}
+                    <li class="msg-context-item msg-context-visa">
                         {{msg.user.visa}}
                     </li>
-                    <li class="msg-context-item">
-                                                       {% if msg.status == 'editable' %}
-                                                        <a href="/edit-message/{{msg.id}}/">{{msg.status}}</a>
-                                                        {% else %}
-                                                        {{msg.status}}
-                                                        {% endif %}
-                                                        <a href="/delete-message/{{msg.id}}/">Удалить сообщение</a>
-
-                                                        {% if request.user.is_authenticated and request.user.app_user != msg.user and not request.user.app_user in msg.thankers.all%}
-                                                        <form>
-                                                        {% csrf_token %}
-                                                            <button formmethod="post" formaction="/thank-message/{{msg.id}}/" type="submit">Поблагодарить</button>
-                                                        </form>
-                                                        {% endif %}
-
-                                                        {% if request.user.is_authenticated and request.user.app_user != msg.user and request.user.app_user in msg.thankers.all%}
-                                                        <form>
-                                                        {% csrf_token %}
-                                                            <button formmethod="post" formaction="/undo-thank-message/{{msg.id}}/" type="submit">Отозвать благодарность</button>
-                                                        </form>
-                                                        {% endif %}
-                    </li>
-                </ul>
+                    {% endif %}
+                 </ul>
                 </div>
             </li>
             {% endfor %}

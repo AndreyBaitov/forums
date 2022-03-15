@@ -141,12 +141,12 @@ class TopicDetailView(generic.DetailView):
                 messages = Messages.objects.filter(topic=topic).order_by('-created_at')[0 + (page - 1) * 50:]
         sum_pages = math.ceil(sum_msg_on_topic / 50)
         pages = list_pages(page,sum_pages)
-
+        number = 1+(page-1)*50
         for msg in messages:        # расставляем окончания
             msg.thanks_ending = case_ending(msg.user.thanks)
-            print(msg.thanks_ending)
             msg.acknowledgements_ending = case_ending(msg.user.acknowledgements)
-            print(msg.acknowledgements_ending)
+            msg.number_in_topic = number
+            number += 1
 
         self.extra_context = {
             'messages': messages,
