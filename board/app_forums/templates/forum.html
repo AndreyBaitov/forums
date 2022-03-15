@@ -14,14 +14,14 @@
         <div class="list-moderators"><strong>Модераторы:</strong>
                              {% for moderator in forum.moderators.all %}
                              {% if moderator.status == 'admin' %}
-                            <a class="moderator-link admin-link" href="/user/moderator.id}}/">{{moderator.username}}</a>
+                            <a class="admin-link" href="/user/moderator.id}}/">{{moderator.username}}</a>
                              {% else %}
                             <a class="moderator-link" href="/user/moderator.id}}/">{{moderator.username}}</a>
                              {% endif %}
                              {% endfor %}
         </div>
         <div class="nav-above-topics-forms">
-            <div class="left-part-nav-above-topics-forms">
+            <div class="left-part-container">
                 <a class="button-new-theme" title="Создать новую тему" href="/forum/{{forum.id}}/add-topic/">Новая тема</a>
                 <form method="POST" class="search-container">
                     <input class="inputbox-search" name="keywords-forum" id="keywords-forum" type="search" title="Ключевые слова" value="" placeholder="Поиск в форуме…">
@@ -29,7 +29,7 @@
                     <button class="header-button button-extented-search" type="submit" title="Расширенный Поиск"><img src="{% static 'img/extended-search.svg' %}"></button>
                 </form>
             </div>
-            <div class="right-part-nav-above-topics-forms">
+            <div class="right-part-container">
                 <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
@@ -225,7 +225,7 @@
 <div class="small-container under-topics-container">
 
         <div class="nav-above-topics-forms">
-            <div class="left-part-nav-above-topics-forms">
+            <div class="left-part-container">
                 <a class="button-new-theme" title="Создать новую тему">Новая тема</a>
                 <form method="POST" class="sorting-container">
                 <!--ТУТ НАДО ВСТАВИТЬ выпадающий СПИСОК-->
@@ -233,7 +233,7 @@
             </div>
 
 
-            <div class="right-part-nav-above-topics-forms">
+            <div class="right-part-container">
                 <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->

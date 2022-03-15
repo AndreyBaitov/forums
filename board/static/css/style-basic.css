@@ -277,6 +277,11 @@ body {
 	align-items: center;
 }
 
+.right-part-container{
+	display: flex;
+	align-items: center;
+}
+
 /* Строка навигации прямо над футером */
 
 .nav-above-footer-container{

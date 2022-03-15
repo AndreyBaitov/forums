@@ -21,8 +21,10 @@ class Users(models.Model):
     ninja = models.BooleanField(verbose_name='Скрытность пользователя', default=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=User.objects.first().pk, blank=True, related_name='app_user')
     acknowledgements = models.IntegerField(verbose_name='Сколько раз благодарили пользователя',default=0)
+    thanks = models.IntegerField(verbose_name='Сколько раз благодарил сам пользователь', default=0)
     last_activity = models.DateTimeField(verbose_name='Дата последней активности по StatUsers', auto_now=True)
     avatar = models.ImageField(upload_to=user_directory_path,default='img/user.svg')
+    msgs = models.IntegerField(verbose_name='Количество сообщений пользователя', default=0)
 
     def __str__(self):
         return self.username

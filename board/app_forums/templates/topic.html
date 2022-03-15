@@ -13,10 +13,10 @@
 <nav class="nav-above-topics">
     <div class="small-container nav-above-topics-container">
         <h2 class="nav-above-forum-title">{{topic.title}}</h2>
-        <div class="list-moderators">Модераторы:
-                            {% for moderator in moderators %}
+        <div class="list-moderators"><strong>Модераторы:</strong>
+                            {% for moderator in topic.forum.moderators.all %}
                             {% if moderator.status == 'admin' %}
-                            <a class="moderator-link admin-link" href="/user/{{moderator.id}}/">{{moderator.username}}</a>
+                            <a class="admin-link" href="/user/{{moderator.id}}/">{{moderator.username}}</a>
                             {% else %}
                             <a class="moderator-link" href="/user/{{moderator.id}}/">{{moderator.username}}</a>
                             {% endif %}
@@ -25,9 +25,9 @@
 
 
         <div class="nav-above-topics-forms">
-            <div class="left-part-nav-above-topics-forms">
+            <div class="left-part-container">
                 <a class="button-new-theme" href="/topic/{{topic.id}}/add-message/" title="Ответить">Ответить</a>
-                <a class="simple-button" href="/topic/{{topic.id}}/settings/" title="Управление темой"><img src="{% static 'img/wrench-icon.svg'%}" class="wrench-icon"></a>
+                <a class="simple-button header-button button-search" href="/topic/{{topic.id}}/settings/" title="Управление темой"><i class="fa fa-wrench fa-fw" aria-hidden="true"></i></a>
                 <form method="POST" class="search-container">
                     <input class="inputbox-search" name="keywords-topic" id="keywords-topic" type="search" title="Ключевые слова" value="" placeholder="Поиск в теме…">
                     <button class="header-button button-search" type="submit" title="Поиск"><img src="{% static 'img/search.svg'%}"></button>
@@ -36,28 +36,32 @@
             </div>
 
 
-            <div class="right-part-nav-above-topics-forms">
-                <div class="forum-topics">{{topic_messages}} сообщений</div>
-                <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
-                {% if page_arrow_left %}
-                <a class="page-link arrow-link" href="/forum/1/page/2/">&lsaquo;</a>
-                {% endif %}
-                {% for page, number_page in pages %}
-                {% if page == '...' %}
-                ...
-                {% else %}
-                <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>-->
-                {% endif %}
-                {% endfor %}
-                <a class="page-link" href="/forum/1/page/2/">1</a>
-                <a class="page-link" href="/forum/1/page/2/">2</a>
-                <a class="page-link" href="/forum/1/page/2/">3</a>
-                <a class="page-link" href="/forum/1/page/2/">4</a>
-                <a class="page-link" href="/forum/1/page/2/">5</a>
-                <a class="page-link" href="/forum/1/page/2/">6</a>
-                <a class="page-link" href="/forum/1/page/2/">7</a>
-                {% if page_arrow_right %}
-                <a class="page-link arrow-link" href="/forum/1/page/2/">&rsaquo;</a>
+            <div class="right-part-container">
+                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{{sum_ending}}&nbsp;</div>
+                {% if pages%}
+                    {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
+                    <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
+                    {% endif%}
+
+                    {% if current_page > 1 %}
+                    <a class="page-link page-arrow-left" href="/topic/{{topic.id}}/page/{{current_page|add:-1}}/">&lt;</a>
+                    {% endif %}
+
+                        {% for page, number_page in pages %}
+                        {% if page == '...' %}
+                        ... 
+                        {% else %}
+                            {% if number_page == current_page %}
+                            <a class="current-page-link" href="/topic/{{topic.id}}/page/{{number_page}}/">{{page}}</a>
+                            {% else %}
+                            <a class="page-link" href="/topic/{{topic.id}}/page/{{number_page}}/">{{page}}</a>
+                            {% endif %}
+                        {% endif %}
+                        {% endfor %}
+
+                    {% if current_page < sum_pages %}
+                    <a class="page-link page-arrow-right" href="/topic/{{topic.id}}/page/{{current_page|add:1}}/">&gt;</a>
+                    {% endif %}
 
                 {% endif %}
             </div>
@@ -70,7 +74,7 @@
 <section class="topic">
     <div class="small-container topic-container">
         <ul class="topic-body msgs-list">
-            {% for msg in topic.messages %}
+            {% for msg in messages %}
             <li class="msg-item">
                 <div class="user-info">
                     <div class="user-avatar">
@@ -80,12 +84,30 @@
                         <img class="user-avatar-big" src="{% static 'img/user.svg' %}">
                         {% endif %}
                     </div>
-                    <div class="username-in-msg">{{msg.user.username}}</div>
-                    <div class="usermsg-in-msg">Сообщений: {{msg.user.sum_msgs}}</div>
-                    <div class="userreg-in-msg">Зарегистрирован: {{msg.user.created_at}}</div>
-                    <div class="userfrom-in-msg">Откуда: {{msg.user.region}}</div>
-                    <div class="user-thank-in-msg">Благодарил(а): {{msg.user.thank}} раз</div>
-                    <div class="to-user-thank-in-msg">Поблагодарили: {{msg.user.to_thank}} раз</div>
+                    <ul class="user-info-list">
+                        <li class="user-info-item">
+                            {% if msg.user.status == 'admin' %}
+                            <a class="admin-link" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
+                            {% else %}
+                            <a class="user-link brown-link" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
+                            {% endif %}
+                        </li>
+                        <li class="user-info-item">
+                            Сообщений: {{msg.user.msgs}}
+                        </li>
+                        <li class="user-info-item">
+                            Зарегистрирован: {{msg.user.created_at}}
+                        </li>
+                        <li class="user-info-item">
+                            Откуда: {{msg.user.region}}
+                        </li>
+                        <li class="user-info-item">
+                            Благодарил(а): {{msg.user.thanks}} раз{{msg.thanks_ending}}
+                        </li>
+                        <li class="user-info-item">
+                            Поблагодарили: {{msg.user.acknowledgements}} раз{{msg.acknowledgements_ending}}
+                        </li>
+                    </ul>
                 </div>
                 <div class="msg-context">
                 <ul class="msg-context-list">
@@ -133,5 +155,52 @@
         </ul>
     </div>      
 </section>
+
+<nav class="nav-above-topics">
+    <div class="small-container nav-above-topics-container">
+        <div class="nav-above-topics-forms">
+            <div class="left-part-container">
+                <a class="button-new-theme" href="/topic/{{topic.id}}/add-message/" title="Ответить">Ответить</a>
+                <a class="simple-button header-button button-search" href="/topic/{{topic.id}}/settings/" title="Управление темой"><i class="fa fa-wrench fa-fw" aria-hidden="true"></i></a>
+            </div>
+            <div class="right-part-container">
+                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{{sum_ending}}&nbsp;</div>
+                {% if pages%}
+                    {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
+                    <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
+                    {% endif%}
+
+                    {% if current_page > 1 %}
+                    <a class="page-link page-arrow-left" href="/topic/{{topic.id}}/page/{{current_page|add:-1}}/">&lt;</a>
+                    {% endif %}
+
+                        {% for page, number_page in pages %}
+                        {% if page == '...' %}
+                        ... 
+                        {% else %}
+                            {% if number_page == current_page %}
+                            <a class="current-page-link" href="/topic/{{topic.id}}/page/{{number_page}}/">{{page}}</a>
+                            {% else %}
+                            <a class="page-link" href="/topic/{{topic.id}}/page/{{number_page}}/">{{page}}</a>
+                            {% endif %}
+                        {% endif %}
+                        {% endfor %}
+
+                    {% if current_page < sum_pages %}
+                    <a class="page-link page-arrow-right" href="/topic/{{topic.id}}/page/{{current_page|add:1}}/">&gt;</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="nav-above-topics-forms">
+            <div class="left-part-container">
+            </div>
+            <div class="right-part-container">
+            </div>
+        </div>
+    </div>
+</nav>
+
 
 {% endblock %}

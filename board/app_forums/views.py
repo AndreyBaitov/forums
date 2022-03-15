@@ -74,12 +74,29 @@ class ForumDetailView(generic.DetailView):
             'pages': pages
                                 }
         response = super().get(self, request, forum_id, page, *args, **kwargs)
-        # ваш код с куками подсчета просмотров
         return response
 
 def theme_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова тем в зависимости от количества'''
+    '''Функция возвращающая строковую переменную окончания слова тем__ в зависимости от количества'''
     endings = {'1':'а','2':'ы','3':'ы','4':'ы','5':'','6':'','7':'','8':'','9':'','0':''}
+    if number > 5 and number < 20:
+        ending = ''
+    else:
+        ending = endings[str(number)[-1]]
+    return ending
+
+def msg_ending(number:int)->str:
+    '''Функция возвращающая строковую переменную окончания слова сообщен__ в зависимости от количества'''
+    endings = {'1':'ие','2':'ия','3':'ия','4':'ия','5':'ий','6':'ий','7':'ий','8':'ий','9':'ий','0':'ий'}
+    if number > 5 and number < 20:
+        ending = 'ий'
+    else:
+        ending = endings[str(number)[-1]]
+    return ending
+
+def case_ending(number:int)->str:
+    '''Функция возвращающая строковую переменную окончания слова раз___ в зависимости от количества'''
+    endings = {'1':'','2':'а','3':'а','4':'а','5':'','6':'','7':'','8':'','9':'','0':''}
     if number > 5 and number < 20:
         ending = ''
     else:
@@ -101,11 +118,6 @@ def list_pages(page, sum):
 
 
 
-
-
-
-
-
 class TopicDetailView(generic.DetailView):
     '''Отображение темы со всеми её сообщениями'''
     model = Topics
@@ -116,8 +128,36 @@ class TopicDetailView(generic.DetailView):
         topic = Topics.objects.get(id=topic_id)
         topic.messages = Messages.objects.filter(topic=topic).order_by('created_at')
         forum = topic.forum
-        messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
-        self.extra_context = {'messages': messages,'forum':forum, 'topic': topic}
+        all_messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
+        sum_msg_on_topic = len(all_messages)
+
+        if sum_msg_on_topic < 50:    # Если сообщений меньше чем на 1 страницу, то показываем все
+            messages = all_messages
+            page = 1                # пофигу на какую страницу шел пользователь, мы его перешлём на 1
+        else:                       # иначе начинаем смотреть куда шел пользователь и даём ему список сообщений
+            try:
+                messages = Messages.objects.filter(topic=topic).order_by('-created_at')[0+(page-1)*50:50+(page-1)*50]
+            except IndexError:      # суда попадаем при краевом случае на последней странице
+                messages = Messages.objects.filter(topic=topic).order_by('-created_at')[0 + (page - 1) * 50:]
+        sum_pages = math.ceil(sum_msg_on_topic / 50)
+        pages = list_pages(page,sum_pages)
+
+        for msg in messages:        # расставляем окончания
+            msg.thanks_ending = case_ending(msg.user.thanks)
+            print(msg.thanks_ending)
+            msg.acknowledgements_ending = case_ending(msg.user.acknowledgements)
+            print(msg.acknowledgements_ending)
+
+        self.extra_context = {
+            'messages': messages,
+            'topic': topic,
+            'forum':forum,
+            'current_page':page,
+            'sum_msg_on_topic':sum_msg_on_topic,
+            'sum_ending':msg_ending(sum_msg_on_topic),
+            'sum_pages':sum_pages,
+            'pages': pages,
+                                }
         response = super().get(self, request, topic_id, page, *args, **kwargs)
         topic.counted_views += 1
         topic.save()
@@ -152,6 +192,8 @@ class MessageAddView(generic.DetailView):
                 msg = Messages.objects.create(**msg_form.cleaned_data)
                 topic.updated_at = msg.created_at
                 topic.save()
+                user.msgs += 1
+                user.save()
                 return HttpResponseRedirect(f'/topic/{topic_id}/page/1/')
             else:
                 return render(request, 'add-message.html', context={'msg_form': msg_form})
@@ -196,6 +238,8 @@ class TopicAddView(generic.DetailView):
                 msg = Messages.objects.create(**msg_form.cleaned_data)
                 msg.updated_at = msg.created_at
                 msg.save()
+                user.msgs += 1
+                user.save()
                 return HttpResponseRedirect(f'/forum/{forum_id}/page/1/')
             else:
                 topics = Topics.objects.filter(forum=forum)
@@ -253,6 +297,8 @@ class MessageDeleteView(View):
         user = request.user.app_user
         # проверка не требуется, поскольку она уже пройдена в методе get
         all_msg = Messages.objects.filter(topic=topic)
+        msg.user.msgs -= 1
+        msg.user.save()
         if len(all_msg) == 1:  # это единственное сообщение в теме
             msg.delete()
             topic.delete()
@@ -277,6 +323,8 @@ def thanks(request, pk):
     msg.save()
     msg.user.acknowledgements += 1
     msg.user.save()
+    user.thanks += 1
+    user.save()
     return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
 
 def undo_thanks(request, pk):
@@ -295,4 +343,6 @@ def undo_thanks(request, pk):
     msg.save()
     msg.user.acknowledgements -= 1
     msg.user.save()
+    user.thanks -= 1
+    user.save()
     return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
