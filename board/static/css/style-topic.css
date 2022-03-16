@@ -81,11 +81,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-top: 5px;
 }
 
 .msg-context-header{
     font-size: 12px;
     font-weight: bold;
+    padding-bottom: 3px;
 }
 
 .msg-context-info{
@@ -100,3 +102,33 @@
     text-align: right;
 }
 
+.msg-context-icons{
+    padding-right: 10px;
+}
+
+.red-icon{
+    color: #CC3333;
+}
+
+.icon-list{
+    display: flex;
+    align-items: center;
+}
+
+.icon-item{
+    margin-right: 4px;
+}
+
+.right-msg-icon{
+    width: 25px;
+    height: 25px;
+    border: 1px solid #fffff1;
+    border-radius: 3px;
+    font-size:  15px;
+    background-color: #fffff1;
+    color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
