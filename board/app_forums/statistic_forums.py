@@ -1,26 +1,8 @@
 '''Собирает статистику форумов для выдачи их на главной странице'''
 
-import time
+import time, datetime
 from collections import namedtuple
 
-
-def clock():
-    '''Возврашает время в формате 12:54. Вынесено в отдельную функцию, чтобы не тащить сбор всей статистики в других обращениях'''
-    today = time.gmtime(time.time() - time.timezone)
-    return time.strftime('%H:%M',today)
-
-def date():
-    '''Вовзрашает дату в формате Понедельник, 5 марта 2022'''
-    today = time.gmtime(time.time())
-    year = today[0]
-    month = today[1]
-    day = today[2]
-    day_week = today[6]
-    month_name = ['месяц','января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']
-    day_week_name = ['Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница', 'Суббота', 'Воскресенье']
-    month = month_name[month]
-    day_week = day_week_name[day_week]
-    return day_week + ', ' + str(day) + ' ' + month + ' ' + str(year)
 
 class CollectStatisticForums:
     '''Возвращает словарь данных в атрибуте data'''
@@ -29,8 +11,6 @@ class CollectStatisticForums:
         self.data = {}
 
     def run (self):
-        self.data['date'] = date()
-        self.data['time'] = clock()
         self.clean_db_stat()       # очистка базы от старых записей
         self.data['now_users'] = self.now_users()
         self.data['users'] = self.users()
@@ -45,10 +25,10 @@ class CollectStatisticForums:
         try:
             if self.data['max_users'] < self.data['now_users']:
                 self.data['max_users'] = self.data['now_users']
-                self.data['datetime_of_max_users'] = self.data['date'] + ' ' + self.data['time']
+                self.data['datetime_of_max_users'] = datetime.datetime.now()
         except KeyError:
             self.data['max_users'] = self.data['now_users']
-            self.data['datetime_of_max_users'] = self.data['date'] + ' ' + self.data['time']
+            self.data['datetime_of_max_users'] = datetime.datetime.now()
         return self.data
 
     def clean_db_stat(self):
@@ -125,5 +105,3 @@ class CollectStatisticForums:
 
 if __name__ == '__main__':
     stat = CollectStatisticForums()
-    print(stat.date())
-    print(stat.time())

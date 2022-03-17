@@ -9,6 +9,46 @@ from django.db.models import Q, Count, Subquery, OuterRef, DateTimeField
 import datetime, math
 
 
+def theme_ending(number:int)->str:
+    '''Функция возвращающая строковую переменную окончания слова тем__ в зависимости от количества'''
+    endings = {'1':'а','2':'ы','3':'ы','4':'ы','5':'','6':'','7':'','8':'','9':'','0':''}
+    if number > 5 and number < 20:
+        ending = ''
+    else:
+        ending = endings[str(number)[-1]]
+    return ending
+
+def msg_ending(number:int)->str:
+    '''Функция возвращающая строковую переменную окончания слова сообщен__ в зависимости от количества'''
+    endings = {'1':'ие','2':'ия','3':'ия','4':'ия','5':'ий','6':'ий','7':'ий','8':'ий','9':'ий','0':'ий'}
+    if number > 5 and number < 20:
+        ending = 'ий'
+    else:
+        ending = endings[str(number)[-1]]
+    return ending
+
+def case_ending(number:int)->str:
+    '''Функция возвращающая строковую переменную окончания слова раз___ в зависимости от количества'''
+    endings = {'1':'','2':'а','3':'а','4':'а','5':'','6':'','7':'','8':'','9':'','0':''}
+    if number > 5 and number < 20:
+        ending = ''
+    else:
+        ending = endings[str(number)[-1]]
+    return ending
+
+def list_pages(page, sum):
+    '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
+    if sum == 1:
+        return None
+    if sum < 8:
+        return [(str(x),x) for x in range(1,sum+1)]
+    if page < 5:
+        return [('1',1),('2',2),('3',3),('4',4),('5',5),('...',0),(str(sum),sum)]
+    if page > sum-4:
+        return [('1',1),('...',0),(str(sum-5),sum-5),(str(sum-4),sum-4),(str(sum-3),sum-3),(str(sum-2),sum-2),(str(sum-1),sum-1),(str(sum),sum)]
+    return [('1',1), ('...',0), (str(page-2),page-2), (str(page-1),page-1), (str(page),page), (str(page+1),page+1), (str(page+2),page+2), ('...',0),(str(sum),sum)]
+
+
 class ForumsView(generic.ListView):
     '''Список всех форумов'''
     model = Forums
@@ -75,48 +115,6 @@ class ForumDetailView(generic.DetailView):
                                 }
         response = super().get(self, request, forum_id, page, *args, **kwargs)
         return response
-
-def theme_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова тем__ в зависимости от количества'''
-    endings = {'1':'а','2':'ы','3':'ы','4':'ы','5':'','6':'','7':'','8':'','9':'','0':''}
-    if number > 5 and number < 20:
-        ending = ''
-    else:
-        ending = endings[str(number)[-1]]
-    return ending
-
-def msg_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова сообщен__ в зависимости от количества'''
-    endings = {'1':'ие','2':'ия','3':'ия','4':'ия','5':'ий','6':'ий','7':'ий','8':'ий','9':'ий','0':'ий'}
-    if number > 5 and number < 20:
-        ending = 'ий'
-    else:
-        ending = endings[str(number)[-1]]
-    return ending
-
-def case_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова раз___ в зависимости от количества'''
-    endings = {'1':'','2':'а','3':'а','4':'а','5':'','6':'','7':'','8':'','9':'','0':''}
-    if number > 5 and number < 20:
-        ending = ''
-    else:
-        ending = endings[str(number)[-1]]
-    return ending
-
-def list_pages(page, sum):
-    '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
-    if sum == 1:
-        return None
-    if sum < 8:
-        return [(str(x),x) for x in range(1,sum+1)]
-    if page < 5:
-        return [('1',1),('2',2),('3',3),('4',4),('5',5),('...',0),(str(sum),sum)]
-    if page > sum-4:
-        return [('1',1),('...',0),(str(sum-5),sum-5),(str(sum-4),sum-4),(str(sum-3),sum-3),(str(sum-2),sum-2),(str(sum-1),sum-1),(str(sum),sum)]
-    return [('1',1), ('...',0), (str(page-2),page-2), (str(page-1),page-1), (str(page),page), (str(page+1),page+1), (str(page+2),page+2), ('...',0),(str(sum),sum)]
-
-
-
 
 class TopicDetailView(generic.DetailView):
     '''Отображение темы со всеми её сообщениями'''

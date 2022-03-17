@@ -7,18 +7,18 @@
 <script src="{% static 'js/scripts-forums-list.js'%}"></script>
 
     <div class="logining-user-time small-container">
-    {% if request.user.is_authenticated%}
+    {% if request.user.is_authenticated %}
         <div class="left-part-container time-container">
-        Текущее время: {{date}} {{time}}
+        Текущее время: {%now 'D j E Y H:i'%}
         </div>
         <div class="right-part-container time-container">
-        Предыдущее посещение: {{request.user.app_user.last_activity}}
+        Предыдущее посещение: {{request.user.app_user.last_activity|date:'D j E Y H:i'}}
         </div>
     {% else %}
         <div class="left-part-container time-container">
         </div>
         <div class="right-part-container time-container">
-        Текущее время: {{date}} {{time}}
+        Текущее время: {%now 'D j E Y H:i'%}
         </div>
     {% endif %}
     </div>
@@ -154,7 +154,7 @@
     <li class="under-forums-item">
         <div class="statistic-line under-forums-header">КТО СЕЙЧАС НА ФОРУМАХ</div>
         <div class="statistic-line">В данный момент (5 минут): {{now_users}} посетителей: {{auth_users}} зарегистрированных, {{hidd_users}} скрытых и {{guests}} гостей</div>
-        <div class="statistic-line">Больше всего посетителей ({{max_users}}) было в {{datetime_of_max_users}}</div>
+        <div class="statistic-line">Больше всего посетителей ({{max_users}}) было в {{datetime_of_max_users|date:'D j E Y H:i'}}</div>
     </li>
     <li class="under-forums-item">
         <div class="statistic-line">
