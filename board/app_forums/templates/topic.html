@@ -37,7 +37,12 @@
 
 
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{{sum_ending}}&nbsp;</div>
+                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{% if sum_msg_on_topic|get_digit:1 == 1 and sum_msg_on_topic|get_digit:2 != 1 %}ие
+                    {% elif sum_msg_on_topic|get_digit:1 >= 2 and sum_msg_on_topic|get_digit:1 <= 4 and sum_msg_on_topic|get_digit:2 != 1 %}ия
+                    {% else %}ий
+                            {% endif %}
+                &nbsp;</div>
+
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                     <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
@@ -102,10 +107,12 @@
                             Откуда: {{msg.user.region}}
                         </li>
                         <li class="user-info-item">
-                            Благодарил(а): <a href="/user-thanks/{{msg.user.id}}/" class="brown-link">{{msg.user.thanks}} раз{{msg.thanks_ending}}</a>
+                            Благодарил(а): <a href="/user-thanks/{{msg.user.id}}/" class="brown-link">{{msg.user.thanks}} раз{% if msg.user.thanks|get_digit:1 >= 2 and msg.user.thanks|get_digit:1 <= 4 and msg.user.thanks|get_digit:2 != 1 %}а
+                            {% endif %}</a>
                         </li>
                         <li class="user-info-item">
-                            Поблагодарили: <a href="/user-acknowledgements/{{msg.user.id}}/" class="brown-link">{{msg.user.acknowledgements}} раз{{msg.acknowledgements_ending}}</a>
+                            Поблагодарили: <a href="/user-acknowledgements/{{msg.user.id}}/" class="brown-link">{{msg.user.acknowledgements}} раз{% if msg.user.acknowledgements|get_digit:1 >= 2 and msg.user.acknowledgements|get_digit:1 <= 4 and msg.user.acknowledgements|get_digit:2 != 1 %}а
+                            {% endif %}</a>
                         </li>
                     </ul>
                 </div>
@@ -114,7 +121,7 @@
                     <li class="msg-context-item msg-header">
                         <div class="left-part-container">
                                 <ul>
-                                    <li class="msg-context-header">{{msg.title}}</li>
+                                    <li class="msg-context-header">{{msg.title|default:'Re:...'}}</li>
                                     <li class="msg-context-info">
                                         #{{msg.number_in_topic}} <!--Сделать тут всплывающее окно с ссылкой на сообщение-->
                                         <i class="fa fa-file fa-fw red-icon" aria-hidden="true"></i> 
@@ -229,7 +236,10 @@
                 <a class="simple-button header-button button-search" href="/topic/{{topic.id}}/settings/" title="Управление темой"><i class="fa fa-wrench fa-fw" aria-hidden="true"></i></a>
             </div>
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{{sum_ending}}&nbsp;</div>
+                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{% if sum_msg_on_topic|get_digit:1 == 1 and sum_msg_on_topic|get_digit:2 != 1 %}ие
+                    {% elif sum_msg_on_topic|get_digit:1 >= 2 and sum_msg_on_topic|get_digit:1 <= 4 and sum_msg_on_topic|get_digit:2 != 1 %}ия
+                    {% else %}ий
+                    {% endif %}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                     <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>

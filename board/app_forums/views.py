@@ -9,32 +9,6 @@ from django.db.models import Q, Count, Subquery, OuterRef, DateTimeField
 import datetime, math
 
 
-def theme_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова тем__ в зависимости от количества'''
-    endings = {'1':'а','2':'ы','3':'ы','4':'ы','5':'','6':'','7':'','8':'','9':'','0':''}
-    if number > 5 and number < 20:
-        ending = ''
-    else:
-        ending = endings[str(number)[-1]]
-    return ending
-
-def msg_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова сообщен__ в зависимости от количества'''
-    endings = {'1':'ие','2':'ия','3':'ия','4':'ия','5':'ий','6':'ий','7':'ий','8':'ий','9':'ий','0':'ий'}
-    if number > 5 and number < 20:
-        ending = 'ий'
-    else:
-        ending = endings[str(number)[-1]]
-    return ending
-
-def case_ending(number:int)->str:
-    '''Функция возвращающая строковую переменную окончания слова раз___ в зависимости от количества'''
-    endings = {'1':'','2':'а','3':'а','4':'а','5':'','6':'','7':'','8':'','9':'','0':''}
-    if number > 5 and number < 20:
-        ending = ''
-    else:
-        ending = endings[str(number)[-1]]
-    return ending
 
 def list_pages(page, sum):
     '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
@@ -109,7 +83,6 @@ class ForumDetailView(generic.DetailView):
             'topics': topics,
             'current_page':page,
             'sum_topics_on_forum':sum_topics_on_forum,
-            'sum_ending':theme_ending(sum_topics_on_forum),
             'sum_pages':sum_pages,
             'pages': pages
                                 }
@@ -141,8 +114,6 @@ class TopicDetailView(generic.DetailView):
         pages = list_pages(page,sum_pages)
         number = 1+(page-1)*50
         for msg in messages:        # расставляем окончания
-            msg.thanks_ending = case_ending(msg.user.thanks)
-            msg.acknowledgements_ending = case_ending(msg.user.acknowledgements)
             msg.number_in_topic = number
             number += 1
 
@@ -152,7 +123,6 @@ class TopicDetailView(generic.DetailView):
             'forum':forum,
             'current_page':page,
             'sum_msg_on_topic':sum_msg_on_topic,
-            'sum_ending':msg_ending(sum_msg_on_topic),
             'sum_pages':sum_pages,
             'pages': pages,
                                 }
@@ -341,6 +311,9 @@ def undo_thanks(request, pk):
     msg.save()
     msg.user.acknowledgements -= 1
     msg.user.save()
-    user.thanks -= 1
+    if user.thanks != 0:
+        user.thanks -= 1
+    else:
+        user.thanks = 0
     user.save()
     return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')

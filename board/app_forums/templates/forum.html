@@ -30,7 +30,9 @@
                 </form>
             </div>
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}&nbsp;</div>
+                <div class="forum-topics">{{sum_topics_on_forum}} тем{% if sum_topics_on_forum|get_digit:1 == 1 and sum_topics_on_forum|get_digit:2 != 1 %}а
+                    {% elif sum_topics_on_forum|get_digit:1 >= 2 and sum_topics_on_forum|get_digit:1 <= 4 and sum_topics_on_forum|get_digit:2 != 1 %}ы
+                            {% endif %}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                     <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
@@ -234,7 +236,9 @@
 
 
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_topics_on_forum}} тем{{sum_ending}}&nbsp;</div>
+                    <div class="forum-topics">{{sum_topics_on_forum}} тем{% if sum_topics_on_forum|get_digit:1 == 1 and sum_topics_on_forum|get_digit:2 != 1 %}а
+                    {% elif sum_topics_on_forum|get_digit:1 >= 2 and sum_topics_on_forum|get_digit:1 <= 4 and sum_topics_on_forum|get_digit:2 != 1 %}ы
+                            {% endif %}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                     <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>

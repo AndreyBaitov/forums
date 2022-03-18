@@ -86,11 +86,7 @@
                 <li class="forum last-message">
                     <ul class="last-message-list">
                         <li class="last-message-item last-message-topic">
-                            {% if forum.last_message.title %}
-                            <a href="/message/{{forum.last_message.id}}/">{{forum.last_message.title}}</a>
-                            {% else %}
-                            <a href="/message/{{forum.last_message.id}}/">Re:...</a>
-                            {% endif %}
+                            <a href="/message/{{forum.last_message.id}}/">{{forum.last_message.title|default:'Re:...'}}</a>
                         </li>
                         <li class="last-message-item last-message-info">
                             {% if forum.last_message.user.status == 'admin' %}
