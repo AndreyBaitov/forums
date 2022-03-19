@@ -30,8 +30,8 @@
                 </form>
             </div>
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_topics_on_forum}} тем{% if sum_topics_on_forum|get_digit:1 == 1 and sum_topics_on_forum|get_digit:2 != 1 %}а
-                    {% elif sum_topics_on_forum|get_digit:1 >= 2 and sum_topics_on_forum|get_digit:1 <= 4 and sum_topics_on_forum|get_digit:2 != 1 %}ы
+                <div class="forum-topics">{{forum.sum_topics}} тем{% if forum.sum_topics|get_digit:1 == 1 and forum.sum_topics|get_digit:2 != 1 %}а
+                    {% elif forum.sum_topics|get_digit:1 >= 2 and forum.sum_topics|get_digit:1 <= 4 and forum.sum_topics|get_digit:2 != 1 %}ы
                             {% endif %}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
@@ -109,7 +109,7 @@
                         {% endfor %}
                     </ul>
                 </li>
-                <li class="forum number-topics">{{adv.messages}}
+                <li class="forum number-topics">{{adv.sum_msgs|add:-1}}
                 </li>
                 <li class="forum number-views">{{adv.counted_views}}
                 </li>
@@ -184,7 +184,7 @@
                         {% endfor %}
                     </ul>
                 </li>
-                <li class="forum number-topics">{{topic.messages}}
+                <li class="forum number-topics">{{topic.sum_msgs|add:-1}}
                 </li>
                 <li class="forum number-views">{{topic.counted_views}}
                 </li>
@@ -236,8 +236,8 @@
 
 
             <div class="right-part-container">
-                    <div class="forum-topics">{{sum_topics_on_forum}} тем{% if sum_topics_on_forum|get_digit:1 == 1 and sum_topics_on_forum|get_digit:2 != 1 %}а
-                    {% elif sum_topics_on_forum|get_digit:1 >= 2 and sum_topics_on_forum|get_digit:1 <= 4 and sum_topics_on_forum|get_digit:2 != 1 %}ы
+                    <div class="forum-topics">{{forum.sum_topics}} тем{% if forum.sum_topics|get_digit:1 == 1 and forum.sum_topics|get_digit:2 != 1 %}а
+                    {% elif forum.sum_topics|get_digit:1 >= 2 and forum.sum_topics|get_digit:1 <= 4 and forum.sum_topics|get_digit:2 != 1 %}ы
                             {% endif %}&nbsp;</div>
                 {% if pages%}
                     {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->

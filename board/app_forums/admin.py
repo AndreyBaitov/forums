@@ -8,7 +8,7 @@ class CategoriesAdmin(admin.ModelAdmin):
 
 class ForumsAdmin(admin.ModelAdmin):
     '''Админка форумов'''
-    list_display = ['id','name','category','status','list_moderators']  # показать в админке только эти поля
+    list_display = ['id','name','category','status','list_moderators','sum_topics']  # показать в админке только эти поля
     actions = ['mark_as_opened','mark_as_closed','mark_as_hiddened']  # список функций
     list_filter = ['status']  # справа будет возможность выбрать фильтрацию по всем возможным статусам
 
@@ -27,7 +27,7 @@ class ForumsAdmin(admin.ModelAdmin):
 
 class TopicsAdmin(admin.ModelAdmin):
     '''Админка тем'''
-    list_display = ['id', 'title', 'forum', 'type', 'status']  # показать в админке только эти поля
+    list_display = ['id', 'title', 'forum', 'type', 'status','sum_msgs']  # показать в админке только эти поля
     actions = ['mark_as_opened', 'mark_as_closed', 'mark_as_hiddened']  # список функций
     list_filter = ['status','type']  # справа будет возможность выбрать фильтрацию по всем возможным статусам
 
@@ -50,7 +50,7 @@ class TopicsAdmin(admin.ModelAdmin):
 
 class MessagesAdmin(admin.ModelAdmin):
     '''Админка тем'''
-    list_display = ['id', 'title','topic', 'status','list_thankers']  # показать в админке только эти поля
+    list_display = ['id', 'title','topic', 'status','list_thankers','number']  # показать в админке только эти поля
     actions = ['mark_as_editable', 'mark_as_closed', 'mark_as_hiddened', 'admin_deleted']  # список функций
     list_filter = ['status']  # справа будет возможность выбрать фильтрацию по всем возможным статусам
     # inlines = [MessagesInline]

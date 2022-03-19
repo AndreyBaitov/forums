@@ -35,7 +35,7 @@
 <section class="forums">
     {% for category in categories %}
     <!-- Коричневая шапка -->
-    {% if category.category.all%}  <!-- Проверка не пустая ли категория -->
+    {% if category.forums.all%}  <!-- Проверка не пустая ли категория -->
     <div class="small-container forums-container">
         <div class="forums-header">
             <div class="forums-header-category">{{category.name}}
@@ -82,7 +82,7 @@
                 </li>
                 <li class="forum number-topics">{{forum.sum_topics}}
                 </li>
-                <li class="forum number-messages">{{forum.sum_msg}}
+                <li class="forum number-messages">{{forum.sum_msgs}}
                 </li>
                 <li class="forum last-message">
                     <ul class="last-message-list">

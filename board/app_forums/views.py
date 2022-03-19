@@ -37,12 +37,11 @@ class ForumsView(generic.ListView):
         self.extra_context.update(stat_data)
         for forum in forums:
             topics = Topics.objects.filter(forum=forum)
-            sum_msg = 0
+            sum_msgs = 0
             for topic in topics:
-                sum_msg += len(Messages.objects.filter(topic=topic))
-            forum.sum_msg = sum_msg  # сумма сообщений на форуме
-            forum.sum_topics = len(Topics.objects.filter(forum=forum))  # сумма тем на форуме
-            forum.last_message = Messages.objects.filter(topic__forum=forum).order_by('-created_at').first()
+                sum_msgs += topic.sum_msgs
+            forum.sum_msgs = sum_msgs  # сумма сообщений на форуме
+            forum.last_message = Messages.objects.filter(topic__forum=forum).order_by('created_at').last()
         self.extra_context.update({'forums':forums})
         response = super().get(self, request, *args, **kwargs)
         return response
@@ -58,8 +57,7 @@ class ForumDetailView(generic.DetailView):
         forum_id = pk
         forum = Forums.objects.get(id=forum_id)  # get возвращает только 1 объект, два не может
         all_topics = Topics.objects.filter(forum=forum).order_by('-updated_at')
-        sum_topics_on_forum = len(all_topics)
-        if sum_topics_on_forum < 16:    # Если тем меньше чем на 1 страницу, то показываем все темы
+        if forum.sum_topics < 16:    # Если тем меньше чем на 1 страницу, то показываем все темы
             topics = all_topics
             page = 1                # пофигу на какую страницу шел пользователь, мы его перешлём на 1
         else:                       # иначе начинаем смотреть куда шел пользователь и даём ему список тем
@@ -68,17 +66,14 @@ class ForumDetailView(generic.DetailView):
             except IndexError:      # суда попадаем при краевом случае на последней странице
                 topics = Topics.objects.filter(forum=forum).order_by('-updated_at')[0 + (page - 1) * 15:]
         for topic in topics:
-            topic.messages = len(Messages.objects.filter(topic=topic))-1
-            topic.pages = list_pages(1, math.ceil(topic.messages / 50))
+            topic.pages = list_pages(1, math.ceil(topic.sum_msgs / 50))
             topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
-        sum_pages = math.ceil(sum_topics_on_forum / 15)
-        pages = list_pages(page,sum_pages)
+        sum_pages = math.ceil(forum.sum_topics / 15)
         self.extra_context = {
             'topics': topics,
             'current_page':page,
-            'sum_topics_on_forum':sum_topics_on_forum,
             'sum_pages':sum_pages,
-            'pages': pages
+            'pages': list_pages(page,sum_pages)
                                 }
         response = super().get(self, request, forum_id, page, *args, **kwargs)
         return response
@@ -91,32 +86,24 @@ class TopicDetailView(generic.DetailView):
     def get(self, request, pk, page, *args, **kwargs):
         topic_id = pk
         topic = Topics.objects.get(id=topic_id)
-        topic.messages = Messages.objects.filter(topic=topic).order_by('created_at')
+        # topic.messages = Messages.objects.filter(topic=topic).order_by('-created_at')
         forum = topic.forum
-        all_messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
-        sum_msg_on_topic = len(all_messages)
-
-        if sum_msg_on_topic < 50:    # Если сообщений меньше чем на 1 страницу, то показываем все
-            messages = all_messages
+        if topic.sum_msgs < 50:    # Если сообщений меньше чем на 1 страницу, то показываем все
+            messages = Messages.objects.filter(topic=topic)
             page = 1                # пофигу на какую страницу шел пользователь, мы его перешлём на 1
         else:                       # иначе начинаем смотреть куда шел пользователь и даём ему список сообщений
             try:
-                messages = Messages.objects.filter(topic=topic).order_by('-created_at')[0+(page-1)*50:50+(page-1)*50]
+                messages = Messages.objects.filter(topic=topic)[0+(page-1)*50:50+(page-1)*50]
             except IndexError:      # суда попадаем при краевом случае на последней странице
-                messages = Messages.objects.filter(topic=topic).order_by('-created_at')[0 + (page - 1) * 50:]
-        sum_pages = math.ceil(sum_msg_on_topic / 50)
+                messages = Messages.objects.filter(topic=topic)[0 + (page - 1) * 50:]
+        sum_pages = math.ceil(topic.sum_msgs / 50)
         pages = list_pages(page,sum_pages)
-        number = 1+(page-1)*50
-        for msg in messages:        # расставляем окончания
-            msg.number_in_topic = number
-            number += 1
 
         self.extra_context = {
             'messages': messages,
             'topic': topic,
             'forum':forum,
             'current_page':page,
-            'sum_msg_on_topic':sum_msg_on_topic,
             'sum_pages':sum_pages,
             'pages': pages,
                                 }
@@ -151,8 +138,10 @@ class MessageAddView(generic.DetailView):
                 topic_id = pk                               # ищем тему в которой сделан пост
                 topic = Topics.objects.get(id=topic_id)
                 msg_form.cleaned_data['topic'] = topic
+                msg_form.cleaned_data['number'] = topic.sum_msgs + 1
                 msg = Messages.objects.create(**msg_form.cleaned_data)
                 topic.updated_at = msg.created_at
+                topic.sum_msgs += 1
                 topic.save()
                 user.msgs += 1
                 user.save()
@@ -193,6 +182,8 @@ class TopicAddView(generic.DetailView):
                 topic = Topics.objects.create(**topic_form.cleaned_data)
                 topic.updated_at = topic.created_at
                 topic.save()
+                topic.forum.sum_topics += 1
+                topic.forum.save()
 
                 msg_form.cleaned_data['user'] = user  # связываем сообщение с пользователем и темой и ставим флаг для но_делит
                 msg_form.cleaned_data['topic'] = topic
@@ -258,14 +249,31 @@ class MessageDeleteView(View):
             return HttpResponseRedirect('/login/')
         user = request.user.app_user
         # проверка не требуется, поскольку она уже пройдена в методе get
-        all_msg = Messages.objects.filter(topic=topic)
         msg.user.msgs -= 1
-        msg.user.save()
-        if len(all_msg) == 1:  # это единственное сообщение в теме
+        if topic.sum_msgs == 1:  # это единственное сообщение в теме
+            topic.forum.sum_topics -= 1
+            topic.forum.save()
+            for user in msg.thankers.all():  # стираем все благодарности и пользователям и юзеру
+                msg.user.acknowledgements -= 1
+                user.thanks -= 1
+                user.save()
+            msg.user.save()
             msg.delete()
             topic.delete()
             return HttpResponseRedirect(f'/forum/{forum.id}/page/1/')
         else:
+            topic.sum_msgs -=1
+            topic.save()
+            number = msg.number
+            msgs = Messages.objects.filter(number__gt=msg.number)
+            for item in msgs:
+                item.number -= 1
+                item.save()
+            for user in msg.thankers.all():  # стираем все благодарности и пользователям и юзеру
+                msg.user.acknowledgements -= 1
+                user.thanks -= 1
+                user.save()
+            msg.user.save()
             msg.delete()
             return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
 

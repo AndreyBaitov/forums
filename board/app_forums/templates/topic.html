@@ -37,8 +37,8 @@
 
 
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{% if sum_msg_on_topic|get_digit:1 == 1 and sum_msg_on_topic|get_digit:2 != 1 %}ие
-                    {% elif sum_msg_on_topic|get_digit:1 >= 2 and sum_msg_on_topic|get_digit:1 <= 4 and sum_msg_on_topic|get_digit:2 != 1 %}ия
+                <div class="forum-topics">{{topic.sum_msgs}} сообщен{% if topic.sum_msgs|get_digit:1 == 1 and topic.sum_msgs|get_digit:2 != 1 %}ие
+                    {% elif topic.sum_msgs|get_digit:1 >= 2 and topic.sum_msgs|get_digit:1 <= 4 and topic.sum_msgs|get_digit:2 != 1 %}ия
                     {% else %}ий
                             {% endif %}
                 &nbsp;</div>
@@ -123,7 +123,7 @@
                                 <ul>
                                     <li class="msg-context-header">{{msg.title|default:'Re:...'}}</li>
                                     <li class="msg-context-info">
-                                        #{{msg.number_in_topic}} <!--Сделать тут всплывающее окно с ссылкой на сообщение-->
+                                        #{{msg.number}} <!--Сделать тут всплывающее окно с ссылкой на сообщение-->
                                         <i class="fa fa-file fa-fw red-icon" aria-hidden="true"></i> 
                                         {% if msg.user.status == 'admin' %}
                                             <a class="admin-link" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
@@ -158,7 +158,7 @@
                                     {% if request.user.app_user.status == 'admin' or request.user.app_user in msg.topic.forum.moderators.all %}
                                     <form>
                                     {% csrf_token %}
-                                        <button title="Удалить это сообщение" formmethod="post" formaction="/delete-message/{{msg.id}}/" type="submit" class="right-msg-icon"><i class="fa fa-times fa-fw " aria-hidden="true"></i></button>
+                                        <button title="Удалить это сообщение" formmethod="get" formaction="/delete-message/{{msg.id}}/" type="submit" class="right-msg-icon"><i class="fa fa-times fa-fw " aria-hidden="true"></i></button>
                                     </form>
                                     {% endif %}
                                 </li>
@@ -236,8 +236,8 @@
                 <a class="simple-button header-button button-search" href="/topic/{{topic.id}}/settings/" title="Управление темой"><i class="fa fa-wrench fa-fw" aria-hidden="true"></i></a>
             </div>
             <div class="right-part-container">
-                <div class="forum-topics">{{sum_msg_on_topic}} сообщен{% if sum_msg_on_topic|get_digit:1 == 1 and sum_msg_on_topic|get_digit:2 != 1 %}ие
-                    {% elif sum_msg_on_topic|get_digit:1 >= 2 and sum_msg_on_topic|get_digit:1 <= 4 and sum_msg_on_topic|get_digit:2 != 1 %}ия
+                <div class="forum-topics">{{topic.sum_msgs}} сообщен{% if topic.sum_msgs|get_digit:1 == 1 and topic.sum_msgs|get_digit:2 != 1 %}ие
+                    {% elif topic.sum_msgs|get_digit:1 >= 2 and topic.sum_msgs|get_digit:1 <= 4 and topic.sum_msgs|get_digit:2 != 1 %}ия
                     {% else %}ий
                     {% endif %}&nbsp;</div>
                 {% if pages%}

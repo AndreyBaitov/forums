@@ -11,6 +11,7 @@ class CollectStatisticForums:
         self.data = {}
 
     def run (self):
+        # self.adjustment_information_in_db()  # уточнение данных по базе/кол-во сообщений и прочее. Включается после миграций
         self.clean_db_stat()       # очистка базы от старых записей
         self.data['now_users'] = self.now_users()
         self.data['users'] = self.users()
@@ -102,6 +103,35 @@ class CollectStatisticForums:
         except Exception as exc:  # если пользователей меньше 5
             pass
         return res
+
+    def adjustment_information_in_db(self):
+        '''Настраивает инфу пользователей, сообщений, тем, форумов, после внесения различных изменений в порядки базы данных'''
+        from app_profile.models import Users
+        from app_forums.models import Messages,Topics,Forums
+        # Проверка пользователей
+        users = Users.objects.all()
+        for user in users:
+            user.msgs =len(user.msgs_this_user.all())
+            user.acknowledgements = 0
+            for msg in user.msgs_this_user.all():
+                if msg.thankers.all() == None:
+                    continue
+                user.acknowledgements += len(msg.thankers.all())
+            user.thanks = len(Messages.objects.filter(thankers=user))
+            user.save()
+        topics = Topics.objects.all()
+        for topic in topics:
+            topic.sum_msgs = len(Messages.objects.filter(topic=topic))
+            topic.save()
+            msgs = Messages.objects.filter(topic=topic).order_by('created_at')
+            for count,msg in enumerate(msgs, start=1):
+                msg.number = count
+                msg.save()
+        forums = Forums.objects.all()
+        for forum in forums:
+            forum.sum_topics = len(Topics.objects.filter(forum=forum))
+            forum.save()
+
 
 if __name__ == '__main__':
     stat = CollectStatisticForums()
