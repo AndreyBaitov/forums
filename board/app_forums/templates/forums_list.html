@@ -33,11 +33,12 @@
 
 
 <section class="forums">
-    {% for key, category in categories.items %}
+    {% for category in categories %}
     <!-- Коричневая шапка -->
+    {% if category.category.all%}  <!-- Проверка не пустая ли категория -->
     <div class="small-container forums-container">
         <div class="forums-header">
-            <div class="forums-header-category">{{category}}
+            <div class="forums-header-category">{{category.name}}
             </div>
             <div class="forums-header-themes">Темы
             </div>
@@ -53,7 +54,7 @@
         <!-- Списки форумов под шапкой -->
         <div class="forums-body forums-list">
             {% for forum in forums %}
-            {% if forum.status != 'hiddened' and forum.category.name == category %}
+            {% if forum.status != 'hiddened' and forum.category == category%}
             <ul class="forum-info">
                 <li class="forum topic-icon">
                     <img src="{% static 'img/nonewmsg.png'%}">
@@ -105,7 +106,7 @@
             {% endfor %}  <!-- Цикла списка форумов -->
         </div>
     </div>
-
+    {% endif %}   <!-- конец условия, что категория не пустая -->
     {% endfor %}  <!-- Цикла категорий -->
 </section>
 

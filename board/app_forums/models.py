@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+
+
 class Categories(models.Model):
     '''Категории форумов: Барахолка, Общение, Судомоделизм'''
     name = models.CharField(max_length=100)
@@ -12,6 +14,7 @@ class Categories(models.Model):
         verbose_name_plural = 'Категории форумов'
         verbose_name = 'Категория'
         ordering = ['name']
+
 
 class Forums(models.Model):
     STATUS_CHOICE = [('opened', 'opened'), ('closed', 'closed'), ('hiddened', 'hiddened')]

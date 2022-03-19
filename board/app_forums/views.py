@@ -9,7 +9,6 @@ from django.db.models import Q, Count, Subquery, OuterRef, DateTimeField
 import datetime, math
 
 
-
 def list_pages(page, sum):
     '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
     if sum == 1:
@@ -32,13 +31,8 @@ class ForumsView(generic.ListView):
     def get(self, request, *args, **kwargs):
         '''К стандартному добавляем составление актуального списка категорий и сбор статистики'''
         forums = Forums.objects.all()
-        categories = {}  # собираем список имеющихся в данный момент категорий форумов, чтобы не показывать пустые
-        for forum in forums:
-            categories[forum.category.id] = forum.category.name
-        ordered_categories = {}
-        for key in sorted(list(categories.keys())):  # сортируем по id список этих форумов в виде словаря
-            ordered_categories[key] = categories[key]
-        self.extra_context = {'categories': ordered_categories}
+        categories = Categories.objects.all() # пустота категорий проверяется в шаблоне
+        self.extra_context = {'categories': categories}
         stat_data = self.statistic.run() # сбор статистики
         self.extra_context.update(stat_data)
         for forum in forums:
