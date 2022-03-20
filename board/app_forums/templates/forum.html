@@ -34,7 +34,7 @@
                     {% elif forum.sum_topics|get_digit:1 >= 2 and forum.sum_topics|get_digit:1 <= 4 and forum.sum_topics|get_digit:2 != 1 %}ы
                             {% endif %}&nbsp;</div>
                 {% if pages%}
-                    {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
+                    {% if pages|last > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                     <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
                     {% endif%}
 
@@ -42,19 +42,19 @@
                     <a class="page-link page-arrow-left" href="/forum/{{forum.id}}/page/{{current_page|add:-1}}/">&lt;</a>
                     {% endif %}
 
-                        {% for page, number_page in pages %}
+                        {% for page in pages %}
                         {% if page == '...' %}
                         ... 
                         {% else %}
-                            {% if number_page == current_page %}
-                            <a class="current-page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                            {% if page == current_page %}
+                            <a class="current-page-link" href="/forum/{{forum.id}}/page/{{page}}/">{{page}}</a>
                             {% else %}
-                            <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                            <a class="page-link" href="/forum/{{forum.id}}/page/{{page}}/">{{page}}</a>
                             {% endif %}
                         {% endif %}
                         {% endfor %}
 
-                    {% if current_page < sum_pages %}
+                    {% if current_page < pages|last %}
                     <a class="page-link page-arrow-right" href="/forum/{{forum.id}}/page/{{current_page|add:1}}/">&gt;</a>
                     {% endif %}
 
@@ -100,11 +100,11 @@
                         {% if adv.pages%}
                         <li><img src="{% static 'img/pages-icon.svg'%}" class="pages-icon"></li>
                         {% endif %}
-                        {% for page, number_page in adv.pages %}
+                        {% for page in adv.pages %}
                             {% if page == '...' %}
                                 <li>...</li>
                             {% else %}
-                                <li><a class="topic-info-page-link" href="/topic/{{adv.id}}/page/{{number_page}}/">{{page}}</a></li>
+                                <li><a class="topic-info-page-link" href="/topic/{{adv.id}}/page/{{page}}/">{{page}}</a></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
@@ -175,11 +175,11 @@
                         {% if topic.pages%}
                         <li><img src="{% static 'img/pages-icon.svg'%}" class="pages-icon"></li>
                         {% endif %}
-                        {% for page, number_page in topic.pages %}
+                        {% for page in topic.pages %}
                             {% if page == '...' %}
                                 <li>...</li>
                             {% else %}
-                                <li><a class="topic-info-page-link" href="/topic/{{topic.id}}/page/{{number_page}}/">{{page}}</a></li>
+                                <li><a class="topic-info-page-link" href="/topic/{{topic.id}}/page/{{page}}/">{{page}}</a></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
@@ -240,7 +240,7 @@
                     {% elif forum.sum_topics|get_digit:1 >= 2 and forum.sum_topics|get_digit:1 <= 4 and forum.sum_topics|get_digit:2 != 1 %}ы
                             {% endif %}&nbsp;</div>
                 {% if pages%}
-                    {% if sum_pages > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
+                    {% if pages|last > 7 %}  <!--Если страниц больше 7, то появляется иконка перехода на номер страницы -->
                     <div class="goto-page"><a class="goto-page-link" href="/popup-goto-page/">&#8629;</a></div>
                     {% endif%}
 
@@ -248,19 +248,19 @@
                     <a class="page-link page-arrow-left" href="/forum/{{forum.id}}/page/{{current_page|add:-1}}/">&lt;</a>
                     {% endif %}
 
-                        {% for page, number_page in pages %}
+                        {% for page in pages %}
                         {% if page == '...' %}
                         ... 
                         {% else %}
-                            {% if number_page == current_page %}
-                            <a class="current-page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                            {% if page == current_page %}
+                            <a class="current-page-link" href="/forum/{{forum.id}}/page/{{page}}/">{{page}}</a>
                             {% else %}
-                            <a class="page-link" href="/forum/{{forum.id}}/page/{{number_page}}/">{{page}}</a>
+                            <a class="page-link" href="/forum/{{forum.id}}/page/{{page}}/">{{page}}</a>
                             {% endif %}
                         {% endif %}
                         {% endfor %}
 
-                    {% if current_page < sum_pages %}
+                    {% if current_page < pages|last %}
                     <a class="page-link page-arrow-right" href="/forum/{{forum.id}}/page/{{current_page|add:1}}/">&gt;</a>
                     {% endif %}
                 {% endif %}

@@ -14,12 +14,12 @@ def list_pages(page, sum):
     if sum == 1:
         return None
     if sum < 8:
-        return [(str(x),x) for x in range(1,sum+1)]
+        return [x for x in range(1,sum+1)]
     if page < 5:
-        return [('1',1),('2',2),('3',3),('4',4),('5',5),('...',0),(str(sum),sum)]
+        return [1,2,3,4,5,'...',sum]
     if page > sum-4:
-        return [('1',1),('...',0),(str(sum-5),sum-5),(str(sum-4),sum-4),(str(sum-3),sum-3),(str(sum-2),sum-2),(str(sum-1),sum-1),(str(sum),sum)]
-    return [('1',1), ('...',0), (str(page-2),page-2), (str(page-1),page-1), (str(page),page), (str(page+1),page+1), (str(page+2),page+2), ('...',0),(str(sum),sum)]
+        return [1,'...',sum-5,sum-4,sum-3,sum-2,sum-1,sum]
+    return [1, '...', page-2, page-1, page, page+1, page+2, '...', sum]
 
 
 class ForumsView(generic.ListView):
@@ -72,7 +72,6 @@ class ForumDetailView(generic.DetailView):
         self.extra_context = {
             'topics': topics,
             'current_page':page,
-            'sum_pages':sum_pages,
             'pages': list_pages(page,sum_pages)
                                 }
         response = super().get(self, request, forum_id, page, *args, **kwargs)
@@ -104,7 +103,6 @@ class TopicDetailView(generic.DetailView):
             'topic': topic,
             'forum':forum,
             'current_page':page,
-            'sum_pages':sum_pages,
             'pages': pages,
                                 }
         response = super().get(self, request, topic_id, page, *args, **kwargs)
