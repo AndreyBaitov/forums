@@ -7,7 +7,8 @@ from django.http import HttpResponseRedirect
 from app_forums.statistic_forums import CollectStatisticForums
 from django.db.models import Q, Count, Subquery, OuterRef, DateTimeField
 import datetime, math
-
+MSG_PER_PAGE = 50
+TOPIC_PER_PAGE = 15
 
 def list_pages(page, sum):
     '''Функция выдающая список строк для отображения страниц, как тем в форме, так и сообщений в теме'''
@@ -66,9 +67,9 @@ class ForumDetailView(generic.DetailView):
             except IndexError:      # суда попадаем при краевом случае на последней странице
                 topics = Topics.objects.filter(forum=forum).order_by('-updated_at')[0 + (page - 1) * 15:]
         for topic in topics:
-            topic.pages = list_pages(1, math.ceil(topic.sum_msgs / 50))
+            topic.pages = list_pages(1, math.ceil(topic.sum_msgs / MSG_PER_PAGE))
             topic.last_message = Messages.objects.filter(topic=topic).order_by('created_at').last()
-        sum_pages = math.ceil(forum.sum_topics / 15)
+        sum_pages = math.ceil(forum.sum_topics / TOPIC_PER_PAGE)
         self.extra_context = {
             'topics': topics,
             'current_page':page,
@@ -85,17 +86,16 @@ class TopicDetailView(generic.DetailView):
     def get(self, request, pk, page, *args, **kwargs):
         topic_id = pk
         topic = Topics.objects.get(id=topic_id)
-        # topic.messages = Messages.objects.filter(topic=topic).order_by('-created_at')
         forum = topic.forum
-        if topic.sum_msgs < 50:    # Если сообщений меньше чем на 1 страницу, то показываем все
+        if topic.sum_msgs < MSG_PER_PAGE:    # Если сообщений меньше чем на 1 страницу, то показываем все
             messages = Messages.objects.filter(topic=topic)
             page = 1                # пофигу на какую страницу шел пользователь, мы его перешлём на 1
         else:                       # иначе начинаем смотреть куда шел пользователь и даём ему список сообщений
             try:
-                messages = Messages.objects.filter(topic=topic)[0+(page-1)*50:50+(page-1)*50]
+                messages = Messages.objects.filter(topic=topic)[0+(page-1)*MSG_PER_PAGE:MSG_PER_PAGE+(page-1)*MSG_PER_PAGE]
             except IndexError:      # суда попадаем при краевом случае на последней странице
-                messages = Messages.objects.filter(topic=topic)[0 + (page - 1) * 50:]
-        sum_pages = math.ceil(topic.sum_msgs / 50)
+                messages = Messages.objects.filter(topic=topic)[0 + (page - 1) * MSG_PER_PAGE:]
+        sum_pages = math.ceil(topic.sum_msgs / MSG_PER_PAGE)
         pages = list_pages(page,sum_pages)
 
         self.extra_context = {
@@ -124,6 +124,7 @@ class MessageAddView(generic.DetailView):
         msg_form = MessageForm()
         self.extra_context = {'messages': messages,'msg_form':msg_form}
         response = super().get(self, request, topic_id, *args, **kwargs)
+        print(msg_form.as_p())
         return response
 
     def post(self, request, pk):
@@ -143,7 +144,8 @@ class MessageAddView(generic.DetailView):
                 topic.save()
                 user.msgs += 1
                 user.save()
-                return HttpResponseRedirect(f'/topic/{topic_id}/page/1/')
+                page = math.ceil(topic.sum_msgs / MSG_PER_PAGE)
+                return HttpResponseRedirect(f'/topic/{topic_id}/page/{page}/#{msg.number}')
             else:
                 return render(request, 'add-message.html', context={'msg_form': msg_form})
         else:
@@ -207,7 +209,7 @@ class MessageEditView(View):
         topic = msg.topic
         user = request.user.app_user
         if user != msg.user and (user.status != 'admin'):  # Если Вы редактируете не своё сообщение и вы не админ, то нельзя
-            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         msg_form = MessageForm(instance=msg)  # заполняем форму уже имеющимися данными
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id,'topic': topic})
 
@@ -218,7 +220,8 @@ class MessageEditView(View):
         if msg_form.is_valid():
             msg.updated_at = datetime.datetime.now()
             msg.save()
-            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+            page = math.ceil(topic.sum_msgs / MSG_PER_PAGE)
+            return HttpResponseRedirect(f'/topic/{topic_id}/page/{page}/#{msg.number}')
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id, 'topic': topic})
 
 class MessageDeleteView(View):
@@ -235,7 +238,7 @@ class MessageDeleteView(View):
             return render(request, 'delete-message.html', context={'msg': msg, 'topic': topic})
         # теперь проверка может ли простой юзер это делать
         if (request.user.app_user != msg.user) or (msg.status=='closed'):  # Если Вы удаляете не своё сообщение, то нельзя
-            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         # проверка пройдена
         return render(request, 'delete-message.html', context={'msg': msg,'topic': topic})
 
@@ -273,19 +276,20 @@ class MessageDeleteView(View):
                 user.save()
             msg.user.save()
             msg.delete()
-            return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+            page = math.ceil(topic.sum_msgs / MSG_PER_PAGE)
+            return HttpResponseRedirect(f'/topic/{topic.id}/page/{page}/#{number}')
 
 def thanks(request, pk):
     '''Функция обработки объявления благодарности сообщения'''
     msg = Messages.objects.get(id=pk)
     topic = msg.topic
     if not request.user.is_authenticated: # Если благодаришь незалогинившись. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     user = request.user.app_user
     if user == msg.user:  # Если благодаришь сам себя, то редирект. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     if user in msg.thankers.all():  # Если уже благодарил, то редирект. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     # все условия соблюдены
     msg.thankers.add(user)
     msg.save()
@@ -293,19 +297,20 @@ def thanks(request, pk):
     msg.user.save()
     user.thanks += 1
     user.save()
-    return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+    page = math.ceil(msg.number / MSG_PER_PAGE)
+    return HttpResponseRedirect(f'/topic/{topic.id}/page/{page}/#{msg.number}')
 
 def undo_thanks(request, pk):
     '''Функция обработки снятия благодарности сообщения'''
     msg = Messages.objects.get(id=pk)
     topic = msg.topic
     if not request.user.is_authenticated: # Незалогинившись. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     user = request.user.app_user
     if user == msg.user:  # Если это ты же сам. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     if not user in msg.thankers.all():  # Если тебя нет в списке благодаривших, то редирект. Хотя этой иконки не должно быть
-        return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     # все условия соблюдены
     msg.thankers.remove(user)
     msg.save()
@@ -316,4 +321,5 @@ def undo_thanks(request, pk):
     else:
         user.thanks = 0
     user.save()
-    return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
+    page = math.ceil(msg.number / MSG_PER_PAGE)
+    return HttpResponseRedirect(f'/topic/{topic.id}/page/{page}/#{msg.number}')

@@ -6,35 +6,40 @@
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/style_topic.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-basic.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-forum-list.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-forum.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-topic.css'%}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style-add-message.css'%}">
 <div class="container">
 
-    <h2><a href="/topic/{{topic.id}}/">{{topic.title}}</a></h2>
-
-<ul class="messages-list">
-    {% if messages %}
-    {% for message in messages%}
-        <li class="messages">
-            {% if message.title %}
-            <h4 class="messages-title">{{message.title}}</h4>
-            {% else %}
-            <h4 class="messages-title">-</h4>
-            {% endif%}
-            {{message.user}} >> {{message.created_at}} {{message.status}}
-            <div class="msg">{{message.message}}</div>
-        </li>
-    {% endfor%}
-    {% else %}
-    <h4 class="messages-title">Сообщений в теме нет.</h4>
-    {% endif%}
-
-</ul>
+    <h2 class="title-theme"><a href="/topic/{{topic.id}}/">{{topic.title}}</a></h2>
+    ОТВЕТИТЬ
 </div>
 
 <div class="container">
     <form method="post">
         {% csrf_token %}
-        {{msg_form.as_p}}
+        <p>
+    <label for="id_title">Заголовок сообщения:</label>
+    <input type="text" name="title" maxlength="100" id="id_title">
+
+
+  </p>
+
+
+  <p>
+    <label for="id_message">Сообщение:</label>
+    <textarea name="message" cols="40" rows="10" required id="id_message">
+</textarea>
+
+
+
+
+  </p>
+
+
+        
         <button type="submit">Откомментировать</button>
     </form>
 </div>  
