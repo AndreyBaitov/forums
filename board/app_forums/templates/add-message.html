@@ -11,6 +11,8 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-forum.css'%}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-topic.css'%}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/style-add-message.css'%}">
+<script src="{% static 'js/jquery-3.6.0.js'%}"></script>
+<script src="{% static 'js/scripts-add-message.js'%}"></script>
 <div class="container">
 
     <h2 class="title-theme"><a href="/topic/{{topic.id}}/">{{topic.title}}</a></h2>
@@ -20,27 +22,120 @@
 <div class="container">
     <form method="post">
         {% csrf_token %}
-        <p>
-    <label for="id_title">Заголовок сообщения:</label>
-    <input type="text" name="title" maxlength="100" id="id_title">
+        <ul class="add-message-list">
+            <li class="add-message-item">
+                <label class="add-message-label" for="id_title">Заголовок:</label>
+                <input class="add-message-title" type="text" name="title" maxlength="100" id="id_title" value="{{supposed_title}}">
+            </li>
+            <li class="add-message-item add-message-item-upper-buttons">
+                
+            </li>
+            <li class="add-message-item add-message-item-center">
+                <div class="left-part-container">
+                <textarea class="add-message-text" name="message" required id="id_message"></textarea>
+                </div>
+                <div class="right-part-container">
+                    <ul class="right-info-panel-list">
+                        <li class="right-info-panel-item">
+                            <strong>Смайлики</strong>
+                        </li>
+                        <li class="right-info-panel-item">
+                            Тут будут картинки смайликов 1 ряд Тут будут картинки смайликов 2 ряд
+                        </li>
+                        <li class="right-info-panel-item">
+                            <ul>
+                                <li>BBCode ВКЛЮЧЕН</li>
+                                <li>[img] ВКЛЮЧЕН</li>
+                                <li>[flash] ОТКЛЮЧЕН</li>
+                                <li>[url] ВКЛЮЧЕН</li>
+                                <li>Смайлики ВКЛЮЧЕНЫ</li>
+                            </ul>
+                        </li>
+                        <li class="right-info-panel-item">
+                            <a href="#review" class="brown-link">Обзор темы</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="add-message-item add-message-item-buttons">
+                <button class="add-message-button" type="submit">Сохранить черновик</button>
+                <button class="add-message-button" type="submit"><strong>Предпросмотр</strong></button>
+                <button class="add-message-button" type="submit"><strong>Отправить</strong></button>
+            </li>
+            <li class="add-message-item">
+                <button class="add-message-tab tab-settings" type="button"><strong>Настройки</strong></button>
+                <button class="add-message-tab tab-attachments" type="button"><strong>Вложения</strong></button>
+                <ul class="add-message-checked-list">
+                    <li class="add-message-check">
+                        <input type="checkbox" name="disable_bbcode" id="disable_bbcode">Отключить в этом сообщении BBCode
+                    </li>
+                    <li class="add-message-check">
+                        <input type="checkbox" name="disable_smilies" id="disable_smilies">Отключить в этом сообщении смайлики
+                    </li>
+                    <li class="add-message-check">
+                        <input type="checkbox" name="disable_url" id="disable_url">Не преобразовывать адреса URL в ссылки
+                    </li>
+                    <li class="add-message-check">
+                        <input type="checkbox" checked name="attach_signature" id="attach_signature">Присоединить подпись (её можно изменять в личном разделе)
+                    </li>
+                    <li class="add-message-check">
+                        <input type="checkbox" name="notify_me" id="notify_me">Сообщать мне о получении ответа
+                    </li>
+                </ul>
+                <ul class="add-message-attachments">
+                    <li class="attachments-item">
+                        Если вы не хотите добавлять вложения, оставьте поля пустыми. Можно прикреплять файлы, перетаскивая их в окно сообщения.
+                    </li>
+                    <li class="attachments-item">
+                        <input type="button" name="attach_files" id="attach_files" value="Добавить файлы">
+                    </li>
 
-
-  </p>
-
-
-  <p>
-    <label for="id_message">Сообщение:</label>
-    <textarea name="message" cols="40" rows="10" required id="id_message">
-</textarea>
-
-
-
-
-  </p>
-
-
-        
-        <button type="submit">Откомментировать</button>
+            </li>
+        </ul>    
     </form>
 </div>  
+<section>
+    <div class="container">
+        <div class="short-topic-header">
+            <div class="left-part-container">
+                ОБЗОР ТЕМЫ: {{topic.title}}
+            </div>
+            <div class="right-part-container">
+                <a class="brown-link unfold-link">РАЗВЕРНУТЬ</a>
+                <a class="brown-link fold-link">СВЕРНУТЬ</a>
+            </div>
+        </div> 
+        <ul class="short-topic-list short-topic-container">
+            {% for msg in messages%}
+            <li class="short-topic-msg">
+                <ul class="msg-list">
+                    <li class="msg-item msg-item-header">
+                        <div class="left-part-container">
+                            <a href="/msg/{{msg.id}}/" class="brown-link bold">{{msg.title|default:'Re:...'}}</a>
+                        </div>
+                        <div class="right-part-container">
+                            <button title="Цитировать" formmethod="post" type="button" class="right-msg-icon"><i class="fa fa-quote-left fa-fw" aria-hidden="true"></i></button>
+                        </div>
+                    </li>
+                    <li class="msg-item msg-item-user">
+                        <i class="fa fa-file fa-fw light-grey" aria-hidden="true"></i> 
+                        {% if msg.user.status == 'admin' %}
+                            <a class="admin-link bold" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
+                            {% else %}
+                            <a class="user-link brown-link bold" href="/user/{{msg.user.id}}/">{{msg.user.username}}</a>
+                        {% endif %}
+                        &nbsp;&raquo; {{msg.created_at}} 
+                    </li>
+                    <li class="msg-item msg-item-msg">
+                        {{msg.message}}
+                    </li>
+                </ul>
+            </li>
+            {% endfor %} <!-- конец цикла по списку сообщений -->
+        </ul>
+
+        <a href="#" class="return-to-up brown-link"><i class="fa fa-chevron-circle-up fa-fw" aria-hidden="true"></i> Вернуться к началу</a>
+    </div>
+</section>
+
 {% endblock %}

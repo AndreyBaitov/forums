@@ -60,7 +60,13 @@ body {
     color: #CC3333;
 }
 
+.bold{
+	font-weight: bold;
+}
 
+.light-grey{
+	color: #999999;
+}
 
 /* Header */
 

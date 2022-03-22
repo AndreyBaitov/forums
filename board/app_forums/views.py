@@ -120,11 +120,13 @@ class MessageAddView(generic.DetailView):
     def get(self, request, pk, *args, **kwargs):
         topic_id = pk
         topic = Topics.objects.get(id=topic_id)
-        messages = Messages.objects.filter(topic=topic)  #  получаем из базы все сообщения по айди темы
+        try:
+            messages = Messages.objects.filter(topic=topic).order_by('-created_at')[0:50]  #  получаем из базы 50 последних сообщений по айди темы
+        except IndexError:
+            messages = Messages.objects.filter(topic=topic).order_by('-created_at')
         msg_form = MessageForm()
-        self.extra_context = {'messages': messages,'msg_form':msg_form}
+        self.extra_context = {'messages': messages,'msg_form':msg_form,'forum':topic.forum,'supposed_title':'Re: '+topic.title} # todo когда сделаем ответ на сообщение тут будет выбор предполагаемого названия темы
         response = super().get(self, request, topic_id, *args, **kwargs)
-        print(msg_form.as_p())
         return response
 
     def post(self, request, pk):
@@ -193,7 +195,7 @@ class TopicAddView(generic.DetailView):
                 msg.save()
                 user.msgs += 1
                 user.save()
-                return HttpResponseRedirect(f'/forum/{forum_id}/page/1/')
+                return HttpResponseRedirect(f'/topic/{topic.id}/page/1/')
             else:
                 topics = Topics.objects.filter(forum=forum)
                 return render(request, 'add-topic.html', context={'topics': topics,'msg_form':msg_form,'topic_form':topic_form})
@@ -211,7 +213,7 @@ class MessageEditView(View):
         if user != msg.user and (user.status != 'admin'):  # Если Вы редактируете не своё сообщение и вы не админ, то нельзя
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         msg_form = MessageForm(instance=msg)  # заполняем форму уже имеющимися данными
-        return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id,'topic': topic})
+        return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id,'topic': topic,'forum':topic.forum})
 
     def post(self, request, msg_id):
         msg = Messages.objects.get(id=msg_id)
@@ -223,6 +225,7 @@ class MessageEditView(View):
             page = math.ceil(topic.sum_msgs / MSG_PER_PAGE)
             return HttpResponseRedirect(f'/topic/{topic_id}/page/{page}/#{msg.number}')
         return render(request, 'edit-message.html', context={'msg_form': msg_form, 'msg_id': msg_id, 'topic': topic})
+
 
 class MessageDeleteView(View):
     '''удаление сообщения'''

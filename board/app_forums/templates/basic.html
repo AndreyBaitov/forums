@@ -54,7 +54,7 @@
 			<div class="left-part-container">
 				<ul class="middle-nav-list">
 					<li class="middle-nav-item"><a href="/forums/" class="middle-nav-link brown-link bold-link"><i class="fa fa-home fa-fw" aria-hidden="true"></i> Список форумов</a></li>
-					{% if forum.name%}
+					{% if forum.name %}
 					<li class="middle-nav-item middle-nav-link"><i class="fa fa-angle-left" aria-hidden="true"></i></li>
 					<li class="middle-nav-item"><a href="/forum/{{forum.id}}/page/1/" class="middle-nav-link brown-link bold-link">{{forum.name}}</a></li>
 					{% endif %}

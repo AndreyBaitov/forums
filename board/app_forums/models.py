@@ -40,7 +40,6 @@ class Forums(models.Model):
         return ", ".join([x.username for x in self.moderators.all()])
 
 def check_title_topic(title: str):
-    print(title)
     if title.isdigit():
         raise ValidationError('Заголовок не может состоять только из одних цифр!')
 
@@ -86,6 +85,8 @@ class Messages(models.Model):
     thankers = models.ManyToManyField('app_profile.Users', verbose_name='Сказавшие спасибо',
                                         related_name='thankers', blank=True)
     number = models.IntegerField(verbose_name='Номер сообщения в теме', default=1)
+    answer_to = models.ForeignKey('Messages', db_index=True, null=True, on_delete=models.PROTECT,
+                                related_name='to_which_this_answer', blank=True)
 
     def __str__(self):
         return self.user.username +' in topic: ' + self.topic.title
